@@ -1,0 +1,261 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"syscalls.c"
+  14              		.text
+  15              		.align	1
+  16              		.global	printMessageUponCriticalSystemError
+  17              		.thumb
+  18              		.thumb_func
+  20              	printMessageUponCriticalSystemError:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23              		@ link register save eliminated.
+  24 0000 024A     		ldr	r2, .L2
+  25 0002 034B     		ldr	r3, .L2+4
+  26 0004 1A60     		str	r2, [r3, #0]
+  27 0006 FFF7FEBF 		b	uart0Puts
+  28              	.L3:
+  29 000a 00BF     		.align	2
+  30              	.L2:
+  31 000c 00000000 		.word	uart0Putchar
+  32 0010 00000000 		.word	.LANCHOR0
+  34              		.align	1
+  35              		.global	stdio_SetOutputCharFunction
+  36              		.thumb
+  37              		.thumb_func
+  39              	stdio_SetOutputCharFunction:
+  40              		@ args = 0, pretend = 0, frame = 0
+  41              		@ frame_needed = 0, uses_anonymous_args = 0
+  42              		@ link register save eliminated.
+  43 0014 014B     		ldr	r3, .L5
+  44 0016 1860     		str	r0, [r3, #0]
+  45 0018 7047     		bx	lr
+  46              	.L6:
+  47 001a 00BF     		.align	2
+  48              	.L5:
+  49 001c 00000000 		.word	.LANCHOR0
+  51              		.align	1
+  52              		.global	stdio_SetInputCharFunction
+  53              		.thumb
+  54              		.thumb_func
+  56              	stdio_SetInputCharFunction:
+  57              		@ args = 0, pretend = 0, frame = 0
+  58              		@ frame_needed = 0, uses_anonymous_args = 0
+  59              		@ link register save eliminated.
+  60 0020 014B     		ldr	r3, .L8
+  61 0022 5860     		str	r0, [r3, #4]
+  62 0024 7047     		bx	lr
+  63              	.L9:
+  64 0026 00BF     		.align	2
+  65              	.L8:
+  66 0028 00000000 		.word	.LANCHOR0
+  68              		.align	1
+  69              		.global	_kill
+  70              		.thumb
+  71              		.thumb_func
+  73              	_kill:
+  74              		@ args = 0, pretend = 0, frame = 0
+  75              		@ frame_needed = 0, uses_anonymous_args = 0
+  76              		@ link register save eliminated.
+  77 002c 0020     		movs	r0, #0
+  78 002e 7047     		bx	lr
+  80              		.align	1
+  81              		.global	_exit
+  82              		.thumb
+  83              		.thumb_func
+  85              	_exit:
+  86              		@ Volatile: function does not return.
+  87              		@ args = 0, pretend = 0, frame = 0
+  88              		@ frame_needed = 0, uses_anonymous_args = 0
+  89              		@ link register save eliminated.
+  90              	.L12:
+  91 0030 FEE7     		b	.L12
+  93              		.align	1
+  94              		.global	_getpid
+  95              		.thumb
+  96              		.thumb_func
+  98              	_getpid:
+  99              		@ args = 0, pretend = 0, frame = 0
+ 100              		@ frame_needed = 0, uses_anonymous_args = 0
+ 101              		@ link register save eliminated.
+ 102 0032 0020     		movs	r0, #0
+ 103 0034 7047     		bx	lr
+ 105              		.align	1
+ 106              		.global	_init
+ 107              		.thumb
+ 108              		.thumb_func
+ 110              	_init:
+ 111              		@ args = 0, pretend = 0, frame = 0
+ 112              		@ frame_needed = 0, uses_anonymous_args = 0
+ 113              		@ link register save eliminated.
+ 114 0036 0120     		movs	r0, #1
+ 115 0038 7047     		bx	lr
+ 117              		.align	1
+ 118              		.global	_write
+ 119              		.thumb
+ 120              		.thumb_func
+ 122              	_write:
+ 123              		@ args = 0, pretend = 0, frame = 0
+ 124              		@ frame_needed = 0, uses_anonymous_args = 0
+ 125 003a F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 126 003c 074F     		ldr	r7, .L20
+ 127 003e 0C46     		mov	r4, r1
+ 128 0040 3B68     		ldr	r3, [r7, #0]
+ 129 0042 1646     		mov	r6, r2
+ 130 0044 2BB9     		cbnz	r3, .L19
+ 131 0046 07E0     		b	.L17
+ 132              	.L18:
+ 133 0048 605D     		ldrb	r0, [r4, r5]	@ zero_extendqisi2
+ 134 004a 3B68     		ldr	r3, [r7, #0]
+ 135 004c 9847     		blx	r3
+ 136 004e 0135     		adds	r5, r5, #1
+ 137 0050 00E0     		b	.L16
+ 138              	.L19:
+ 139 0052 0025     		movs	r5, #0
+ 140              	.L16:
+ 141 0054 B542     		cmp	r5, r6
+ 142 0056 F7DB     		blt	.L18
+ 143              	.L17:
+ 144 0058 3046     		mov	r0, r6
+ 145 005a F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 146              	.L21:
+ 147              		.align	2
+ 148              	.L20:
+ 149 005c 00000000 		.word	.LANCHOR0
+ 151              		.align	1
+ 152              		.global	_read
+ 153              		.thumb
+ 154              		.thumb_func
+ 156              	_read:
+ 157              		@ args = 0, pretend = 0, frame = 0
+ 158              		@ frame_needed = 0, uses_anonymous_args = 0
+ 159 0060 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 160 0062 094F     		ldr	r7, .L27
+ 161 0064 0C46     		mov	r4, r1
+ 162 0066 7868     		ldr	r0, [r7, #4]
+ 163 0068 1646     		mov	r6, r2
+ 164 006a 30B9     		cbnz	r0, .L26
+ 165 006c F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 166              	.L25:
+ 167 006e 7B68     		ldr	r3, [r7, #4]
+ 168 0070 0020     		movs	r0, #0
+ 169 0072 9847     		blx	r3
+ 170 0074 6055     		strb	r0, [r4, r5]
+ 171 0076 0135     		adds	r5, r5, #1
+ 172 0078 00E0     		b	.L23
+ 173              	.L26:
+ 174 007a 0025     		movs	r5, #0
+ 175              	.L23:
+ 176 007c B542     		cmp	r5, r6
+ 177 007e F6DB     		blt	.L25
+ 178 0080 26EAE670 		bic	r0, r6, r6, asr #31
+ 179 0084 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 180              	.L28:
+ 181 0086 00BF     		.align	2
+ 182              	.L27:
+ 183 0088 00000000 		.word	.LANCHOR0
+ 185              		.align	1
+ 186              		.global	syscallsInit
+ 187              		.thumb
+ 188              		.thumb_func
+ 190              	syscallsInit:
+ 191              		@ args = 0, pretend = 0, frame = 0
+ 192              		@ frame_needed = 0, uses_anonymous_args = 0
+ 193              		@ link register save eliminated.
+ 194 008c 7047     		bx	lr
+ 196              		.align	1
+ 197              		.global	_fstat
+ 198              		.thumb
+ 199              		.thumb_func
+ 201              	_fstat:
+ 202              		@ args = 0, pretend = 0, frame = 0
+ 203              		@ frame_needed = 0, uses_anonymous_args = 0
+ 204              		@ link register save eliminated.
+ 205 008e 0020     		movs	r0, #0
+ 206 0090 7047     		bx	lr
+ 208              		.align	1
+ 209              		.global	_isatty
+ 210              		.thumb
+ 211              		.thumb_func
+ 213              	_isatty:
+ 214              		@ args = 0, pretend = 0, frame = 0
+ 215              		@ frame_needed = 0, uses_anonymous_args = 0
+ 216              		@ link register save eliminated.
+ 217 0092 0020     		movs	r0, #0
+ 218 0094 7047     		bx	lr
+ 220              		.align	1
+ 221              		.global	_lseek
+ 222              		.thumb
+ 223              		.thumb_func
+ 225              	_lseek:
+ 226              		@ args = 0, pretend = 0, frame = 0
+ 227              		@ frame_needed = 0, uses_anonymous_args = 0
+ 228              		@ link register save eliminated.
+ 229 0096 0020     		movs	r0, #0
+ 230 0098 7047     		bx	lr
+ 232              		.align	1
+ 233              		.global	_close
+ 234              		.thumb
+ 235              		.thumb_func
+ 237              	_close:
+ 238              		@ args = 0, pretend = 0, frame = 0
+ 239              		@ frame_needed = 0, uses_anonymous_args = 0
+ 240              		@ link register save eliminated.
+ 241 009a 0020     		movs	r0, #0
+ 242 009c 7047     		bx	lr
+ 244              		.global	__dso_handle
+ 245 009e 00BF     		.bss
+ 246              		.align	2
+ 247              		.set	.LANCHOR0,. + 0
+ 250              	mOutputDevFuncPtr:
+ 251 0000 00000000 		.space	4
+ 254              	mInputDevFuncPtr:
+ 255 0004 00000000 		.space	4
+ 258              	__dso_handle:
+ 259 0008 00000000 		.space	4
+ 260              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 syscalls.c
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:15     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:20     .text:00000000 printMessageUponCriticalSystemError
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:31     .text:0000000c $d
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:34     .text:00000014 $t
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:39     .text:00000014 stdio_SetOutputCharFunction
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:49     .text:0000001c $d
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:51     .text:00000020 $t
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:56     .text:00000020 stdio_SetInputCharFunction
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:66     .text:00000028 $d
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:68     .text:0000002c $t
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:73     .text:0000002c _kill
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:85     .text:00000030 _exit
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:98     .text:00000032 _getpid
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:110    .text:00000036 _init
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:122    .text:0000003a _write
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:149    .text:0000005c $d
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:151    .text:00000060 $t
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:156    .text:00000060 _read
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:183    .text:00000088 $d
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:185    .text:0000008c $t
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:190    .text:0000008c syscallsInit
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:201    .text:0000008e _fstat
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:213    .text:00000092 _isatty
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:225    .text:00000096 _lseek
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:237    .text:0000009a _close
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:258    .bss:00000008 __dso_handle
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:246    .bss:00000000 $d
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:250    .bss:00000000 mOutputDevFuncPtr
+C:\Users\Montoya\AppData\Local\Temp\ccrlVgt6.s:254    .bss:00000004 mInputDevFuncPtr
+
+UNDEFINED SYMBOLS
+uart0Puts
+uart0Putchar

@@ -1,0 +1,110 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"hooks.c"
+  14              		.text
+  15              		.align	1
+  16              		.global	vApplicationIdleHook
+  17              		.thumb
+  18              		.thumb_func
+  20              	vApplicationIdleHook:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23              		@ link register save eliminated.
+  24              	@ 1196 "C:\Users\Montoya\Documents\Classes\CmpE146\Lab\CmpE146Package_LPC1758\projects\lpc17xx_CPP_
+  25 0000 30BF     		wfi
+  26              	@ 0 "" 2
+  27              		.thumb
+  28 0002 7047     		bx	lr
+  30              		.align	1
+  31              		.global	vApplicationStackOverflowHook
+  32              		.thumb
+  33              		.thumb_func
+  35              	vApplicationStackOverflowHook:
+  36              		@ Volatile: function does not return.
+  37              		@ args = 0, pretend = 0, frame = 0
+  38              		@ frame_needed = 0, uses_anonymous_args = 0
+  39 0004 08B5     		push	{r3, lr}
+  40 0006 0C46     		mov	r4, r1
+  41 0008 0748     		ldr	r0, .L4
+  42 000a FFF7FEFF 		bl	printMessageUponCriticalSystemError
+  43 000e 2046     		mov	r0, r4
+  44 0010 FFF7FEFF 		bl	printMessageUponCriticalSystemError
+  45 0014 0548     		ldr	r0, .L4+4
+  46 0016 FFF7FEFF 		bl	printMessageUponCriticalSystemError
+  47 001a 4FF08043 		mov	r3, #1073741824
+  48 001e AA22     		movs	r2, #170
+  49 0020 1A72     		strb	r2, [r3, #8]
+  50 0022 0022     		movs	r2, #0
+  51 0024 1A70     		strb	r2, [r3, #0]
+  52              	.L3:
+  53 0026 FEE7     		b	.L3
+  54              	.L5:
+  55              		.align	2
+  56              	.L4:
+  57 0028 00000000 		.word	.LC0
+  58 002c 29000000 		.word	.LC1
+  60              		.align	1
+  61              		.global	vApplicationMallocFailedHook
+  62              		.thumb
+  63              		.thumb_func
+  65              	vApplicationMallocFailedHook:
+  66              		@ Volatile: function does not return.
+  67              		@ args = 0, pretend = 0, frame = 0
+  68              		@ frame_needed = 0, uses_anonymous_args = 0
+  69 0030 08B5     		push	{r3, lr}
+  70 0032 0548     		ldr	r0, .L8
+  71 0034 FFF7FEFF 		bl	printMessageUponCriticalSystemError
+  72 0038 4FF08043 		mov	r3, #1073741824
+  73 003c AA22     		movs	r2, #170
+  74 003e 1A72     		strb	r2, [r3, #8]
+  75 0040 0022     		movs	r2, #0
+  76 0042 1A70     		strb	r2, [r3, #0]
+  77              	.L7:
+  78 0044 FEE7     		b	.L7
+  79              	.L9:
+  80 0046 00BF     		.align	2
+  81              	.L8:
+  82 0048 55000000 		.word	.LC2
+  84              		.section	.rodata.str1.1,"aMS",%progbits,1
+  85              	.LC0:
+  86 0000 48414C54 		.ascii	"HALTING SYSTEM: Stack overflow by task: \000"
+  86      494E4720 
+  86      53595354 
+  86      454D3A20 
+  86      53746163 
+  87              	.LC1:
+  88 0029 0A547279 		.ascii	"\012Try increasing stack memory of this task.\012\000"
+  88      20696E63 
+  88      72656173 
+  88      696E6720 
+  88      73746163 
+  89              	.LC2:
+  90 0055 48414C54 		.ascii	"HALTING SYSTEM: Your system ran out of memory (RAM)"
+  90      494E4720 
+  90      53595354 
+  90      454D3A20 
+  90      596F7572 
+  91 0088 210A00   		.ascii	"!\012\000"
+  92              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 hooks.c
+C:\Users\Montoya\AppData\Local\Temp\ccsNzyWw.s:15     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\ccsNzyWw.s:20     .text:00000000 vApplicationIdleHook
+C:\Users\Montoya\AppData\Local\Temp\ccsNzyWw.s:35     .text:00000004 vApplicationStackOverflowHook
+C:\Users\Montoya\AppData\Local\Temp\ccsNzyWw.s:57     .text:00000028 $d
+C:\Users\Montoya\AppData\Local\Temp\ccsNzyWw.s:60     .text:00000030 $t
+C:\Users\Montoya\AppData\Local\Temp\ccsNzyWw.s:65     .text:00000030 vApplicationMallocFailedHook
+C:\Users\Montoya\AppData\Local\Temp\ccsNzyWw.s:82     .text:00000048 $d
+
+UNDEFINED SYMBOLS
+printMessageUponCriticalSystemError

@@ -1,0 +1,214 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"main.cpp"
+  14              		.section	.text.adc0_initialize,"axG",%progbits,adc0_initialize,comdat
+  15              		.align	1
+  16              		.weak	adc0_initialize
+  17              		.thumb
+  18              		.thumb_func
+  20              	adc0_initialize:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23 0000 08B5     		push	{r3, lr}
+  24 0002 2B4B     		ldr	r3, .L19
+  25 0004 4FF40011 		mov	r1, #2097152
+  26 0008 D3F8C420 		ldr	r2, [r3, #196]
+  27 000c 42F48052 		orr	r2, r2, #4096
+  28 0010 C3F8C420 		str	r2, [r3, #196]
+  29 0014 274A     		ldr	r2, .L19+4
+  30 0016 1160     		str	r1, [r2, #0]
+  31 0018 D3F8A821 		ldr	r2, [r3, #424]
+  32 001c 22F04072 		bic	r2, r2, #50331648
+  33 0020 C3F8A821 		str	r2, [r3, #424]
+  34 0024 0728     		cmp	r0, #7
+  35 0026 2FD8     		bhi	.L2
+  36 0028 DFE800F0 		tbb	[pc, r0]
+  37              	.L11:
+  38 002c 04       		.byte	(.L3-.L11)/2
+  39 002d 09       		.byte	(.L4-.L11)/2
+  40 002e 0F       		.byte	(.L5-.L11)/2
+  41 002f 14       		.byte	(.L6-.L11)/2
+  42 0030 19       		.byte	(.L7-.L11)/2
+  43 0031 1E       		.byte	(.L8-.L11)/2
+  44 0032 24       		.byte	(.L9-.L11)/2
+  45 0033 29       		.byte	(.L10-.L11)/2
+  46              		.align	1
+  47              	.L3:
+  48 0034 204B     		ldr	r3, .L19+8
+  49 0036 5A68     		ldr	r2, [r3, #4]
+  50 0038 42F48042 		orr	r2, r2, #16384
+  51 003c 03E0     		b	.L16
+  52              	.L4:
+  53 003e 1E4B     		ldr	r3, .L19+8
+  54 0040 5A68     		ldr	r2, [r3, #4]
+  55 0042 42F48032 		orr	r2, r2, #65536
+  56              	.L16:
+  57 0046 5A60     		str	r2, [r3, #4]
+  58 0048 1EE0     		b	.L2
+  59              	.L5:
+  60 004a 1B4B     		ldr	r3, .L19+8
+  61 004c 5A68     		ldr	r2, [r3, #4]
+  62 004e 42F48022 		orr	r2, r2, #262144
+  63 0052 F8E7     		b	.L16
+  64              	.L6:
+  65 0054 184B     		ldr	r3, .L19+8
+  66 0056 5A68     		ldr	r2, [r3, #4]
+  67 0058 42F48012 		orr	r2, r2, #1048576
+  68 005c F3E7     		b	.L16
+  69              	.L7:
+  70 005e 164B     		ldr	r3, .L19+8
+  71 0060 DA68     		ldr	r2, [r3, #12]
+  72 0062 42F04052 		orr	r2, r2, #805306368
+  73 0066 03E0     		b	.L18
+  74              	.L8:
+  75 0068 134B     		ldr	r3, .L19+8
+  76 006a DA68     		ldr	r2, [r3, #12]
+  77 006c 42F04042 		orr	r2, r2, #-1073741824
+  78              	.L18:
+  79 0070 DA60     		str	r2, [r3, #12]
+  80 0072 09E0     		b	.L2
+  81              	.L9:
+  82 0074 104B     		ldr	r3, .L19+8
+  83 0076 1A68     		ldr	r2, [r3, #0]
+  84 0078 42F08002 		orr	r2, r2, #128
+  85 007c 03E0     		b	.L17
+  86              	.L10:
+  87 007e 0E4B     		ldr	r3, .L19+8
+  88 0080 1A68     		ldr	r2, [r3, #0]
+  89 0082 42F02002 		orr	r2, r2, #32
+  90              	.L17:
+  91 0086 1A60     		str	r2, [r3, #0]
+  92              	.L2:
+  93 0088 FFF7FEFF 		bl	getCpuClock
+  94 008c 0B4A     		ldr	r2, .L19+12
+  95 008e 8008     		lsrs	r0, r0, #2
+  96 0090 0023     		movs	r3, #0
+  97              	.L14:
+  98 0092 B0FBF3F1 		udiv	r1, r0, r3
+  99 0096 9142     		cmp	r1, r2
+ 100 0098 05D8     		bhi	.L12
+ 101 009a 064A     		ldr	r2, .L19+4
+ 102 009c 1168     		ldr	r1, [r2, #0]
+ 103 009e 41EA0323 		orr	r3, r1, r3, lsl #8
+ 104 00a2 1360     		str	r3, [r2, #0]
+ 105 00a4 08BD     		pop	{r3, pc}
+ 106              	.L12:
+ 107 00a6 0233     		adds	r3, r3, #2
+ 108 00a8 B3F5807F 		cmp	r3, #256
+ 109 00ac F1D1     		bne	.L14
+ 110 00ae 08BD     		pop	{r3, pc}
+ 111              	.L20:
+ 112              		.align	2
+ 113              	.L19:
+ 114 00b0 00C00F40 		.word	1074774016
+ 115 00b4 00400340 		.word	1073954816
+ 116 00b8 00C00240 		.word	1073922048
+ 117 00bc FF1AB700 		.word	11999999
+ 119              		.section	.text.startup,"ax",%progbits
+ 120              		.align	1
+ 121              		.global	main
+ 122              		.thumb
+ 123              		.thumb_func
+ 125              	main:
+ 126              		@ args = 0, pretend = 0, frame = 24
+ 127              		@ frame_needed = 0, uses_anonymous_args = 0
+ 128 0000 30B5     		push	{r4, r5, lr}
+ 129 0002 0421     		movs	r1, #4
+ 130 0004 8BB0     		sub	sp, sp, #44
+ 131 0006 0022     		movs	r2, #0
+ 132 0008 0120     		movs	r0, #1
+ 133 000a FFF7FEFF 		bl	xQueueGenericCreate
+ 134 000e 0421     		movs	r1, #4
+ 135 0010 0022     		movs	r2, #0
+ 136 0012 0690     		str	r0, [sp, #24]
+ 137 0014 0120     		movs	r0, #1
+ 138 0016 FFF7FEFF 		bl	xQueueGenericCreate
+ 139 001a 0790     		str	r0, [sp, #28]
+ 140 001c 0420     		movs	r0, #4
+ 141 001e FFF7FEFF 		bl	adc0_initialize
+ 142 0022 0520     		movs	r0, #5
+ 143 0024 FFF7FEFF 		bl	adc0_initialize
+ 144 0028 FFF7FEFF 		bl	_Z15initilize_motorv
+ 145 002c 1148     		ldr	r0, .L22
+ 146 002e FFF7FEFF 		bl	puts
+ 147 0032 08AB     		add	r3, sp, #32
+ 148 0034 0024     		movs	r4, #0
+ 149 0036 0125     		movs	r5, #1
+ 150 0038 0193     		str	r3, [sp, #4]
+ 151 003a 0F49     		ldr	r1, .L22+4
+ 152 003c 04AB     		add	r3, sp, #16
+ 153 003e 4FF44072 		mov	r2, #768
+ 154 0042 0E48     		ldr	r0, .L22+8
+ 155 0044 0095     		str	r5, [sp, #0]
+ 156 0046 0294     		str	r4, [sp, #8]
+ 157 0048 0394     		str	r4, [sp, #12]
+ 158 004a FFF7FEFF 		bl	xTaskGenericCreate
+ 159 004e 09AB     		add	r3, sp, #36
+ 160 0050 0193     		str	r3, [sp, #4]
+ 161 0052 0B49     		ldr	r1, .L22+12
+ 162 0054 4FF44072 		mov	r2, #768
+ 163 0058 04AB     		add	r3, sp, #16
+ 164 005a 0A48     		ldr	r0, .L22+16
+ 165 005c 0095     		str	r5, [sp, #0]
+ 166 005e 0294     		str	r4, [sp, #8]
+ 167 0060 0394     		str	r4, [sp, #12]
+ 168 0062 FFF7FEFF 		bl	xTaskGenericCreate
+ 169 0066 FFF7FEFF 		bl	vTaskStartScheduler
+ 170 006a 4FF0FF30 		mov	r0, #-1
+ 171 006e 0BB0     		add	sp, sp, #44
+ 172 0070 30BD     		pop	{r4, r5, pc}
+ 173              	.L23:
+ 174 0072 00BF     		.align	2
+ 175              	.L22:
+ 176 0074 00000000 		.word	.LC0
+ 177 0078 0E000000 		.word	.LC1
+ 178 007c 00000000 		.word	_Z16LightSensorsTaskPv
+ 179 0080 1B000000 		.word	.LC2
+ 180 0084 00000000 		.word	_Z18ServoDirectionTaskPv
+ 182              		.section	.rodata.str1.1,"aMS",%progbits,1
+ 183              	.LC0:
+ 184 0000 53746172 		.ascii	"Starting Task\000"
+ 184      74696E67 
+ 184      20546173 
+ 184      6B00
+ 185              	.LC1:
+ 186 000e 4C696768 		.ascii	"LightSensors\000"
+ 186      7453656E 
+ 186      736F7273 
+ 186      00
+ 187              	.LC2:
+ 188 001b 53657276 		.ascii	"ServoDirection\000"
+ 188      6F446972 
+ 188      65637469 
+ 188      6F6E00
+ 189              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.cpp
+C:\Users\Montoya\AppData\Local\Temp\ccYvas2P.s:15     .text.adc0_initialize:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\ccYvas2P.s:20     .text.adc0_initialize:00000000 adc0_initialize
+C:\Users\Montoya\AppData\Local\Temp\ccYvas2P.s:38     .text.adc0_initialize:0000002c $d
+C:\Users\Montoya\AppData\Local\Temp\ccYvas2P.s:46     .text.adc0_initialize:00000034 $t
+C:\Users\Montoya\AppData\Local\Temp\ccYvas2P.s:114    .text.adc0_initialize:000000b0 $d
+C:\Users\Montoya\AppData\Local\Temp\ccYvas2P.s:120    .text.startup:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\ccYvas2P.s:125    .text.startup:00000000 main
+C:\Users\Montoya\AppData\Local\Temp\ccYvas2P.s:176    .text.startup:00000074 $d
+
+UNDEFINED SYMBOLS
+getCpuClock
+xQueueGenericCreate
+_Z15initilize_motorv
+puts
+xTaskGenericCreate
+vTaskStartScheduler
+_Z16LightSensorsTaskPv
+_Z18ServoDirectionTaskPv

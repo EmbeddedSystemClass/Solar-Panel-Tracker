@@ -1,0 +1,56 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"printf_lib.c"
+  14              		.text
+  15              		.align	1
+  16              		.global	printf
+  17              		.thumb
+  18              		.thumb_func
+  20              	printf:
+  21              		@ args = 4, pretend = 16, frame = 8
+  22              		@ frame_needed = 0, uses_anonymous_args = 1
+  23 0000 0FB4     		push	{r0, r1, r2, r3}
+  24 0002 07B5     		push	{r0, r1, r2, lr}
+  25 0004 04A9     		add	r1, sp, #16
+  26 0006 51F8040B 		ldr	r0, [r1], #4
+  27 000a 0191     		str	r1, [sp, #4]
+  28 000c FFF7FEFF 		bl	viprintf
+  29 0010 BDE80E40 		pop	{r1, r2, r3, lr}
+  30 0014 04B0     		add	sp, sp, #16
+  31 0016 7047     		bx	lr
+  33              		.align	1
+  34              		.global	sprintf
+  35              		.thumb
+  36              		.thumb_func
+  38              	sprintf:
+  39              		@ args = 4, pretend = 12, frame = 8
+  40              		@ frame_needed = 0, uses_anonymous_args = 1
+  41 0018 0EB4     		push	{r1, r2, r3}
+  42 001a 03B5     		push	{r0, r1, lr}
+  43 001c 03AA     		add	r2, sp, #12
+  44 001e 52F8041B 		ldr	r1, [r2], #4
+  45 0022 0192     		str	r2, [sp, #4]
+  46 0024 FFF7FEFF 		bl	vsiprintf
+  47 0028 BDE80C40 		pop	{r2, r3, lr}
+  48 002c 03B0     		add	sp, sp, #12
+  49 002e 7047     		bx	lr
+  51              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 printf_lib.c
+C:\Users\Montoya\AppData\Local\Temp\cc32HpQx.s:15     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\cc32HpQx.s:20     .text:00000000 printf
+C:\Users\Montoya\AppData\Local\Temp\cc32HpQx.s:38     .text:00000018 sprintf
+
+UNDEFINED SYMBOLS
+viprintf
+vsiprintf

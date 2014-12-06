@@ -1,0 +1,154 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"matrixDisplay.cpp"
+  14              		.text
+  15              		.align	1
+  16              		.global	_Z16initilize_matrixv
+  17              		.thumb
+  18              		.thumb_func
+  20              	_Z16initilize_matrixv:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23 0000 08B5     		push	{r3, lr}
+  24 0002 FFF7FEFF 		bl	spi1_Init
+  25 0006 054B     		ldr	r3, .L2
+  26 0008 DA68     		ldr	r2, [r3, #12]
+  27 000a 22F0C002 		bic	r2, r2, #192
+  28 000e DA60     		str	r2, [r3, #12]
+  29 0010 034B     		ldr	r3, .L2+4
+  30 0012 1A68     		ldr	r2, [r3, #0]
+  31 0014 42F40022 		orr	r2, r2, #524288
+  32 0018 1A60     		str	r2, [r3, #0]
+  33 001a 08BD     		pop	{r3, pc}
+  34              	.L3:
+  35              		.align	2
+  36              	.L2:
+  37 001c 00C00240 		.word	1073922048
+  38 0020 20C00920 		.word	537509920
+  40              		.align	1
+  41              		.global	_Z11writeMatrixhh
+  42              		.thumb
+  43              		.thumb_func
+  45              	_Z11writeMatrixhh:
+  46              		@ args = 0, pretend = 0, frame = 0
+  47              		@ frame_needed = 0, uses_anonymous_args = 0
+  48              		@ link register save eliminated.
+  49 0024 7047     		bx	lr
+  51              		.align	1
+  52              		.global	_Z10paintPixeliii
+  53              		.thumb
+  54              		.thumb_func
+  56              	_Z10paintPixeliii:
+  57              		@ args = 0, pretend = 0, frame = 0
+  58              		@ frame_needed = 0, uses_anonymous_args = 0
+  59              		@ link register save eliminated.
+  60 0026 7047     		bx	lr
+  62              		.align	1
+  63              		.global	_Z11clearMatrixv
+  64              		.thumb
+  65              		.thumb_func
+  67              	_Z11clearMatrixv:
+  68              		@ args = 0, pretend = 0, frame = 0
+  69              		@ frame_needed = 0, uses_anonymous_args = 0
+  70              		@ link register save eliminated.
+  71 0028 7047     		bx	lr
+  73              		.align	1
+  74              		.global	_Z6CS_Lowv
+  75              		.thumb
+  76              		.thumb_func
+  78              	_Z6CS_Lowv:
+  79              		@ args = 0, pretend = 0, frame = 0
+  80              		@ frame_needed = 0, uses_anonymous_args = 0
+  81              		@ link register save eliminated.
+  82 002a 034B     		ldr	r3, .L8
+  83 002c DA69     		ldr	r2, [r3, #28]
+  84 002e 42F40022 		orr	r2, r2, #524288
+  85 0032 DA61     		str	r2, [r3, #28]
+  86 0034 7047     		bx	lr
+  87              	.L9:
+  88 0036 00BF     		.align	2
+  89              	.L8:
+  90 0038 20C00920 		.word	537509920
+  92              		.align	1
+  93              		.global	_Z7CS_Highv
+  94              		.thumb
+  95              		.thumb_func
+  97              	_Z7CS_Highv:
+  98              		@ args = 0, pretend = 0, frame = 0
+  99              		@ frame_needed = 0, uses_anonymous_args = 0
+ 100              		@ link register save eliminated.
+ 101 003c 024B     		ldr	r3, .L11
+ 102 003e 9A69     		ldr	r2, [r3, #24]
+ 103 0040 42F40022 		orr	r2, r2, #524288
+ 104 0044 9A61     		str	r2, [r3, #24]
+ 105 0046 7047     		bx	lr
+ 106              	.L12:
+ 107              		.align	2
+ 108              	.L11:
+ 109 0048 20C00920 		.word	537509920
+ 111              		.align	1
+ 112              		.global	_Z14ht1632_sendcmdh
+ 113              		.thumb
+ 114              		.thumb_func
+ 116              	_Z14ht1632_sendcmdh:
+ 117              		@ args = 0, pretend = 0, frame = 0
+ 118              		@ frame_needed = 0, uses_anonymous_args = 0
+ 119 004c 08B5     		push	{r3, lr}
+ 120 004e FFF7FEFF 		bl	_Z6CS_Lowv
+ 121 0052 BDE80840 		pop	{r3, lr}
+ 122 0056 FEE7     		b	_Z7CS_Highv
+ 124              		.align	1
+ 125              		.global	_Z12ht1632_setupv
+ 126              		.thumb
+ 127              		.thumb_func
+ 129              	_Z12ht1632_setupv:
+ 130              		@ args = 0, pretend = 0, frame = 0
+ 131              		@ frame_needed = 0, uses_anonymous_args = 0
+ 132 0058 08B5     		push	{r3, lr}
+ 133 005a FFF7FEFF 		bl	_Z6CS_Lowv
+ 134 005e FFF7FEFF 		bl	_Z7CS_Highv
+ 135 0062 FFF7FEFF 		bl	_Z6CS_Lowv
+ 136 0066 FFF7FEFF 		bl	_Z7CS_Highv
+ 137 006a FFF7FEFF 		bl	_Z6CS_Lowv
+ 138 006e FFF7FEFF 		bl	_Z7CS_Highv
+ 139 0072 FFF7FEFF 		bl	_Z6CS_Lowv
+ 140 0076 FFF7FEFF 		bl	_Z7CS_Highv
+ 141 007a FFF7FEFF 		bl	_Z6CS_Lowv
+ 142 007e FFF7FEFF 		bl	_Z7CS_Highv
+ 143 0082 FFF7FEFF 		bl	_Z6CS_Lowv
+ 144 0086 FFF7FEFF 		bl	_Z7CS_Highv
+ 145 008a FFF7FEFF 		bl	_Z6CS_Lowv
+ 146 008e FFF7FEFF 		bl	_Z7CS_Highv
+ 147 0092 0120     		movs	r0, #1
+ 148 0094 08BD     		pop	{r3, pc}
+ 150 0096 00BF     		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 matrixDisplay.cpp
+C:\Users\Montoya\AppData\Local\Temp\cc9hxKMm.s:15     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\cc9hxKMm.s:20     .text:00000000 _Z16initilize_matrixv
+C:\Users\Montoya\AppData\Local\Temp\cc9hxKMm.s:37     .text:0000001c $d
+C:\Users\Montoya\AppData\Local\Temp\cc9hxKMm.s:40     .text:00000024 $t
+C:\Users\Montoya\AppData\Local\Temp\cc9hxKMm.s:45     .text:00000024 _Z11writeMatrixhh
+C:\Users\Montoya\AppData\Local\Temp\cc9hxKMm.s:56     .text:00000026 _Z10paintPixeliii
+C:\Users\Montoya\AppData\Local\Temp\cc9hxKMm.s:67     .text:00000028 _Z11clearMatrixv
+C:\Users\Montoya\AppData\Local\Temp\cc9hxKMm.s:78     .text:0000002a _Z6CS_Lowv
+C:\Users\Montoya\AppData\Local\Temp\cc9hxKMm.s:90     .text:00000038 $d
+C:\Users\Montoya\AppData\Local\Temp\cc9hxKMm.s:92     .text:0000003c $t
+C:\Users\Montoya\AppData\Local\Temp\cc9hxKMm.s:97     .text:0000003c _Z7CS_Highv
+C:\Users\Montoya\AppData\Local\Temp\cc9hxKMm.s:109    .text:00000048 $d
+C:\Users\Montoya\AppData\Local\Temp\cc9hxKMm.s:111    .text:0000004c $t
+C:\Users\Montoya\AppData\Local\Temp\cc9hxKMm.s:116    .text:0000004c _Z14ht1632_sendcmdh
+C:\Users\Montoya\AppData\Local\Temp\cc9hxKMm.s:129    .text:00000058 _Z12ht1632_setupv
+
+UNDEFINED SYMBOLS
+spi1_Init

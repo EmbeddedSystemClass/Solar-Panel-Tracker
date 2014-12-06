@@ -1,0 +1,145 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"uart0_min.c"
+  14              		.global	__aeabi_ui2d
+  15              		.global	__aeabi_dadd
+  16              		.global	__aeabi_d2iz
+  17              		.text
+  18              		.align	1
+  19              		.global	uart0Init
+  20              		.thumb
+  21              		.thumb_func
+  23              	uart0Init:
+  24              		@ args = 0, pretend = 0, frame = 0
+  25              		@ frame_needed = 0, uses_anonymous_args = 0
+  26 0000 38B5     		push	{r3, r4, r5, lr}
+  27 0002 1A4B     		ldr	r3, .L2
+  28 0004 1A4C     		ldr	r4, .L2+4
+  29 0006 D3F8C420 		ldr	r2, [r3, #196]
+  30 000a 0546     		mov	r5, r0
+  31 000c 42F00802 		orr	r2, r2, #8
+  32 0010 C3F8C420 		str	r2, [r3, #196]
+  33 0014 D3F8A821 		ldr	r2, [r3, #424]
+  34 0018 2D01     		lsls	r5, r5, #4
+  35 001a 22F0C002 		bic	r2, r2, #192
+  36 001e C3F8A821 		str	r2, [r3, #424]
+  37 0022 D3F8A821 		ldr	r2, [r3, #424]
+  38 0026 42F04002 		orr	r2, r2, #64
+  39 002a C3F8A821 		str	r2, [r3, #424]
+  40 002e A3F55023 		sub	r3, r3, #851968
+  41 0032 1A68     		ldr	r2, [r3, #0]
+  42 0034 22F0F002 		bic	r2, r2, #240
+  43 0038 1A60     		str	r2, [r3, #0]
+  44 003a 1A68     		ldr	r2, [r3, #0]
+  45 003c 42F05002 		orr	r2, r2, #80
+  46 0040 1A60     		str	r2, [r3, #0]
+  47 0042 8023     		movs	r3, #128
+  48 0044 2373     		strb	r3, [r4, #12]
+  49 0046 0023     		movs	r3, #0
+  50 0048 2371     		strb	r3, [r4, #4]
+  51 004a FFF7FEFF 		bl	getCpuClock
+  52 004e B0FBF5F0 		udiv	r0, r0, r5
+  53 0052 FFF7FEFF 		bl	__aeabi_ui2d
+  54 0056 074B     		ldr	r3, .L2+8
+  55 0058 0022     		movs	r2, #0
+  56 005a FFF7FEFF 		bl	__aeabi_dadd
+  57 005e FFF7FEFF 		bl	__aeabi_d2iz
+  58 0062 0323     		movs	r3, #3
+  59 0064 C0B2     		uxtb	r0, r0
+  60 0066 2070     		strb	r0, [r4, #0]
+  61 0068 2373     		strb	r3, [r4, #12]
+  62 006a 38BD     		pop	{r3, r4, r5, pc}
+  63              	.L3:
+  64              		.align	2
+  65              	.L2:
+  66 006c 00C00F40 		.word	1074774016
+  67 0070 00C00040 		.word	1073790976
+  68 0074 0000E03F 		.word	1071644672
+  70              		.align	1
+  71              		.global	uart0Putchar
+  72              		.thumb
+  73              		.thumb_func
+  75              	uart0Putchar:
+  76              		@ args = 0, pretend = 0, frame = 0
+  77              		@ frame_needed = 0, uses_anonymous_args = 0
+  78              		@ link register save eliminated.
+  79 0078 034B     		ldr	r3, .L7
+  80 007a 1870     		strb	r0, [r3, #0]
+  81              	.L5:
+  82 007c 1A7D     		ldrb	r2, [r3, #20]	@ zero_extendqisi2
+  83 007e 5206     		lsls	r2, r2, #25
+  84 0080 FCD5     		bpl	.L5
+  85 0082 0120     		movs	r0, #1
+  86 0084 7047     		bx	lr
+  87              	.L8:
+  88 0086 00BF     		.align	2
+  89              	.L7:
+  90 0088 00C00040 		.word	1073790976
+  92              		.align	1
+  93              		.global	uart0Puts
+  94              		.thumb
+  95              		.thumb_func
+  97              	uart0Puts:
+  98              		@ args = 0, pretend = 0, frame = 0
+  99              		@ frame_needed = 0, uses_anonymous_args = 0
+ 100 008c 10B5     		push	{r4, lr}
+ 101 008e 0446     		mov	r4, r0
+ 102 0090 01E0     		b	.L10
+ 103              	.L11:
+ 104 0092 FFF7FEFF 		bl	uart0Putchar
+ 105              	.L10:
+ 106 0096 14F8010B 		ldrb	r0, [r4], #1	@ zero_extendqisi2
+ 107 009a 0028     		cmp	r0, #0
+ 108 009c F9D1     		bne	.L11
+ 109 009e 0A20     		movs	r0, #10
+ 110 00a0 BDE81040 		pop	{r4, lr}
+ 111 00a4 FEE7     		b	uart0Putchar
+ 113              		.align	1
+ 114              		.global	uart0Getchar
+ 115              		.thumb
+ 116              		.thumb_func
+ 118              	uart0Getchar:
+ 119              		@ args = 0, pretend = 0, frame = 0
+ 120              		@ frame_needed = 0, uses_anonymous_args = 0
+ 121              		@ link register save eliminated.
+ 122 00a6 034B     		ldr	r3, .L15
+ 123              	.L13:
+ 124 00a8 1A7D     		ldrb	r2, [r3, #20]	@ zero_extendqisi2
+ 125 00aa D107     		lsls	r1, r2, #31
+ 126 00ac FCD5     		bpl	.L13
+ 127 00ae 014B     		ldr	r3, .L15
+ 128 00b0 1878     		ldrb	r0, [r3, #0]	@ zero_extendqisi2
+ 129 00b2 7047     		bx	lr
+ 130              	.L16:
+ 131              		.align	2
+ 132              	.L15:
+ 133 00b4 00C00040 		.word	1073790976
+ 135              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 uart0_min.c
+C:\Users\Montoya\AppData\Local\Temp\ccSOHvQm.s:18     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\ccSOHvQm.s:23     .text:00000000 uart0Init
+C:\Users\Montoya\AppData\Local\Temp\ccSOHvQm.s:66     .text:0000006c $d
+C:\Users\Montoya\AppData\Local\Temp\ccSOHvQm.s:70     .text:00000078 $t
+C:\Users\Montoya\AppData\Local\Temp\ccSOHvQm.s:75     .text:00000078 uart0Putchar
+C:\Users\Montoya\AppData\Local\Temp\ccSOHvQm.s:90     .text:00000088 $d
+C:\Users\Montoya\AppData\Local\Temp\ccSOHvQm.s:92     .text:0000008c $t
+C:\Users\Montoya\AppData\Local\Temp\ccSOHvQm.s:97     .text:0000008c uart0Puts
+C:\Users\Montoya\AppData\Local\Temp\ccSOHvQm.s:118    .text:000000a6 uart0Getchar
+C:\Users\Montoya\AppData\Local\Temp\ccSOHvQm.s:133    .text:000000b4 $d
+
+UNDEFINED SYMBOLS
+__aeabi_ui2d
+__aeabi_dadd
+__aeabi_d2iz
+getCpuClock

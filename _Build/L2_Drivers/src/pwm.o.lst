@@ -1,0 +1,261 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"pwm.c"
+  14              		.text
+  15              		.align	1
+  16              		.global	pwmEn
+  17              		.thumb
+  18              		.thumb_func
+  20              	pwmEn:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23              		@ link register save eliminated.
+  24 0000 10B1     		cbz	r0, .L3
+  25 0002 0128     		cmp	r0, #1
+  26 0004 13D1     		bne	.L1
+  27 0006 09E0     		b	.L5
+  28              	.L3:
+  29 0008 094B     		ldr	r3, .L6
+  30 000a DA6C     		ldr	r2, [r3, #76]
+  31 000c 22F48052 		bic	r2, r2, #4096
+  32 0010 DA64     		str	r2, [r3, #76]
+  33 0012 DA6C     		ldr	r2, [r3, #76]
+  34 0014 22F40052 		bic	r2, r2, #8192
+  35 0018 DA64     		str	r2, [r3, #76]
+  36 001a 7047     		bx	lr
+  37              	.L5:
+  38 001c 044B     		ldr	r3, .L6
+  39 001e DA6C     		ldr	r2, [r3, #76]
+  40 0020 42F48052 		orr	r2, r2, #4096
+  41 0024 DA64     		str	r2, [r3, #76]
+  42 0026 DA6C     		ldr	r2, [r3, #76]
+  43 0028 42F40052 		orr	r2, r2, #8192
+  44 002c DA64     		str	r2, [r3, #76]
+  45              	.L1:
+  46 002e 7047     		bx	lr
+  47              	.L7:
+  48              		.align	2
+  49              	.L6:
+  50 0030 00800140 		.word	1073840128
+  52              		.align	1
+  53              		.global	initPWM
+  54              		.thumb
+  55              		.thumb_func
+  57              	initPWM:
+  58              		@ args = 0, pretend = 0, frame = 0
+  59              		@ frame_needed = 0, uses_anonymous_args = 0
+  60 0034 38B5     		push	{r3, r4, r5, lr}
+  61 0036 1C4B     		ldr	r3, .L9
+  62 0038 1C4C     		ldr	r4, .L9+4
+  63 003a D3F8C420 		ldr	r2, [r3, #196]
+  64 003e 0546     		mov	r5, r0
+  65 0040 42F04002 		orr	r2, r2, #64
+  66 0044 C3F8C420 		str	r2, [r3, #196]
+  67 0048 6369     		ldr	r3, [r4, #20]
+  68 004a 43F00203 		orr	r3, r3, #2
+  69 004e 6361     		str	r3, [r4, #20]
+  70 0050 FFF7FEFF 		bl	getCpuClock
+  71 0054 B0FBF5F0 		udiv	r0, r0, r5
+  72 0058 A061     		str	r0, [r4, #24]
+  73 005a FFF7FEFF 		bl	getCpuClock
+  74 005e B0FBF5F1 		udiv	r1, r0, r5
+  75 0062 1348     		ldr	r0, .L9+8
+  76 0064 FFF7FEFF 		bl	printf
+  77 0068 A369     		ldr	r3, [r4, #24]
+  78 006a 0020     		movs	r0, #0
+  79 006c 2364     		str	r3, [r4, #64]
+  80 006e A369     		ldr	r3, [r4, #24]
+  81 0070 6364     		str	r3, [r4, #68]
+  82 0072 236D     		ldr	r3, [r4, #80]
+  83 0074 43F00103 		orr	r3, r3, #1
+  84 0078 2365     		str	r3, [r4, #80]
+  85 007a 236D     		ldr	r3, [r4, #80]
+  86 007c 43F01003 		orr	r3, r3, #16
+  87 0080 2365     		str	r3, [r4, #80]
+  88 0082 236D     		ldr	r3, [r4, #80]
+  89 0084 43F02003 		orr	r3, r3, #32
+  90 0088 2365     		str	r3, [r4, #80]
+  91 008a 6368     		ldr	r3, [r4, #4]
+  92 008c 43F00103 		orr	r3, r3, #1
+  93 0090 6360     		str	r3, [r4, #4]
+  94 0092 6368     		ldr	r3, [r4, #4]
+  95 0094 43F00803 		orr	r3, r3, #8
+  96 0098 6360     		str	r3, [r4, #4]
+  97 009a 236F     		ldr	r3, [r4, #112]
+  98 009c 23F00F03 		bic	r3, r3, #15
+  99 00a0 2367     		str	r3, [r4, #112]
+ 100 00a2 BDE83840 		pop	{r3, r4, r5, lr}
+ 101 00a6 FEE7     		b	pwmEn
+ 102              	.L10:
+ 103              		.align	2
+ 104              	.L9:
+ 105 00a8 00C00F40 		.word	1074774016
+ 106 00ac 00800140 		.word	1073840128
+ 107 00b0 00000000 		.word	.LC0
+ 109              		.align	1
+ 110              		.global	pwmUpdateMR
+ 111              		.thumb
+ 112              		.thumb_func
+ 114              	pwmUpdateMR:
+ 115              		@ args = 0, pretend = 0, frame = 0
+ 116              		@ frame_needed = 0, uses_anonymous_args = 0
+ 117              		@ link register save eliminated.
+ 118 00b4 0628     		cmp	r0, #6
+ 119 00b6 30D8     		bhi	.L11
+ 120 00b8 DFE800F0 		tbb	[pc, r0]
+ 121              	.L20:
+ 122 00bc 04       		.byte	(.L13-.L20)/2
+ 123 00bd 0A       		.byte	(.L14-.L20)/2
+ 124 00be 10       		.byte	(.L15-.L20)/2
+ 125 00bf 16       		.byte	(.L16-.L20)/2
+ 126 00c0 1C       		.byte	(.L17-.L20)/2
+ 127 00c1 22       		.byte	(.L18-.L20)/2
+ 128 00c2 29       		.byte	(.L19-.L20)/2
+ 129 00c3 00       		.align	1
+ 130              	.L13:
+ 131 00c4 154B     		ldr	r3, .L22
+ 132 00c6 9961     		str	r1, [r3, #24]
+ 133 00c8 1A6D     		ldr	r2, [r3, #80]
+ 134 00ca 42F00102 		orr	r2, r2, #1
+ 135 00ce 1CE0     		b	.L21
+ 136              	.L14:
+ 137 00d0 124B     		ldr	r3, .L22
+ 138 00d2 D961     		str	r1, [r3, #28]
+ 139 00d4 1A6D     		ldr	r2, [r3, #80]
+ 140 00d6 42F00202 		orr	r2, r2, #2
+ 141 00da 16E0     		b	.L21
+ 142              	.L15:
+ 143 00dc 0F4B     		ldr	r3, .L22
+ 144 00de 1962     		str	r1, [r3, #32]
+ 145 00e0 1A6D     		ldr	r2, [r3, #80]
+ 146 00e2 42F00402 		orr	r2, r2, #4
+ 147 00e6 10E0     		b	.L21
+ 148              	.L16:
+ 149 00e8 0C4B     		ldr	r3, .L22
+ 150 00ea 5962     		str	r1, [r3, #36]
+ 151 00ec 1A6D     		ldr	r2, [r3, #80]
+ 152 00ee 42F00802 		orr	r2, r2, #8
+ 153 00f2 0AE0     		b	.L21
+ 154              	.L17:
+ 155 00f4 094B     		ldr	r3, .L22
+ 156 00f6 1964     		str	r1, [r3, #64]
+ 157 00f8 1A6D     		ldr	r2, [r3, #80]
+ 158 00fa 42F01002 		orr	r2, r2, #16
+ 159 00fe 04E0     		b	.L21
+ 160              	.L18:
+ 161 0100 064B     		ldr	r3, .L22
+ 162 0102 5964     		str	r1, [r3, #68]
+ 163 0104 1A6D     		ldr	r2, [r3, #80]
+ 164 0106 42F02002 		orr	r2, r2, #32
+ 165              	.L21:
+ 166 010a 1A65     		str	r2, [r3, #80]
+ 167 010c 7047     		bx	lr
+ 168              	.L19:
+ 169 010e 034B     		ldr	r3, .L22
+ 170 0110 9964     		str	r1, [r3, #72]
+ 171 0112 1A6D     		ldr	r2, [r3, #80]
+ 172 0114 42F04002 		orr	r2, r2, #64
+ 173 0118 1A65     		str	r2, [r3, #80]
+ 174              	.L11:
+ 175 011a 7047     		bx	lr
+ 176              	.L23:
+ 177              		.align	2
+ 178              	.L22:
+ 179 011c 00800140 		.word	1073840128
+ 181              		.align	1
+ 182              		.global	pwmReadMR
+ 183              		.thumb
+ 184              		.thumb_func
+ 186              	pwmReadMR:
+ 187              		@ args = 0, pretend = 0, frame = 0
+ 188              		@ frame_needed = 0, uses_anonymous_args = 0
+ 189              		@ link register save eliminated.
+ 190 0120 0628     		cmp	r0, #6
+ 191 0122 1AD8     		bhi	.L34
+ 192 0124 DFE800F0 		tbb	[pc, r0]
+ 193              	.L33:
+ 194 0128 04       		.byte	(.L26-.L33)/2
+ 195 0129 07       		.byte	(.L27-.L33)/2
+ 196 012a 0A       		.byte	(.L28-.L33)/2
+ 197 012b 0D       		.byte	(.L29-.L33)/2
+ 198 012c 10       		.byte	(.L30-.L33)/2
+ 199 012d 13       		.byte	(.L31-.L33)/2
+ 200 012e 16       		.byte	(.L32-.L33)/2
+ 201 012f 00       		.align	1
+ 202              	.L26:
+ 203 0130 0B4B     		ldr	r3, .L35
+ 204 0132 9869     		ldr	r0, [r3, #24]
+ 205 0134 7047     		bx	lr
+ 206              	.L27:
+ 207 0136 0A4B     		ldr	r3, .L35
+ 208 0138 D869     		ldr	r0, [r3, #28]
+ 209 013a 7047     		bx	lr
+ 210              	.L28:
+ 211 013c 084B     		ldr	r3, .L35
+ 212 013e 186A     		ldr	r0, [r3, #32]
+ 213 0140 7047     		bx	lr
+ 214              	.L29:
+ 215 0142 074B     		ldr	r3, .L35
+ 216 0144 586A     		ldr	r0, [r3, #36]
+ 217 0146 7047     		bx	lr
+ 218              	.L30:
+ 219 0148 054B     		ldr	r3, .L35
+ 220 014a 186C     		ldr	r0, [r3, #64]
+ 221 014c 7047     		bx	lr
+ 222              	.L31:
+ 223 014e 044B     		ldr	r3, .L35
+ 224 0150 586C     		ldr	r0, [r3, #68]
+ 225 0152 7047     		bx	lr
+ 226              	.L32:
+ 227 0154 024B     		ldr	r3, .L35
+ 228 0156 986C     		ldr	r0, [r3, #72]
+ 229 0158 7047     		bx	lr
+ 230              	.L34:
+ 231 015a 0020     		movs	r0, #0
+ 232 015c 7047     		bx	lr
+ 233              	.L36:
+ 234 015e 00BF     		.align	2
+ 235              	.L35:
+ 236 0160 00800140 		.word	1073840128
+ 238              		.section	.rodata.str1.1,"aMS",%progbits,1
+ 239              	.LC0:
+ 240 0000 70756C73 		.ascii	"pulse Width: %i\012\000"
+ 240      65205769 
+ 240      6474683A 
+ 240      2025690A 
+ 240      00
+ 241              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 pwm.c
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:15     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:20     .text:00000000 pwmEn
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:50     .text:00000030 $d
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:52     .text:00000034 $t
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:57     .text:00000034 initPWM
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:105    .text:000000a8 $d
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:109    .text:000000b4 $t
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:114    .text:000000b4 pwmUpdateMR
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:122    .text:000000bc $d
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:179    .text:0000011c $d
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:181    .text:00000120 $t
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:186    .text:00000120 pwmReadMR
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:194    .text:00000128 $d
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:236    .text:00000160 $d
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:129    .text:000000c3 $d
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:129    .text:000000c4 $t
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:201    .text:0000012f $d
+C:\Users\Montoya\AppData\Local\Temp\cc2sTZug.s:201    .text:00000130 $t
+
+UNDEFINED SYMBOLS
+getCpuClock
+printf

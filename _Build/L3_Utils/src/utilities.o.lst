@@ -1,0 +1,273 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"utilities.cpp"
+  14              		.text
+  15              		.align	1
+  16              		.global	delay_us
+  17              		.thumb
+  18              		.thumb_func
+  20              	delay_us:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23              		@ link register save eliminated.
+  24 0000 4FF04023 		mov	r3, #1073758208
+  25 0004 9A68     		ldr	r2, [r3, #8]
+  26 0006 0A21     		movs	r1, #10
+  27 0008 B0FBF1F0 		udiv	r0, r0, r1
+  28 000c 8018     		adds	r0, r0, r2
+  29 000e 9A68     		ldr	r2, [r3, #8]
+  30 0010 9042     		cmp	r0, r2
+  31 0012 02D2     		bcs	.L2
+  32              	.L5:
+  33 0014 9A68     		ldr	r2, [r3, #8]
+  34 0016 8242     		cmp	r2, r0
+  35 0018 FCD8     		bhi	.L5
+  36              	.L2:
+  37 001a 4FF04023 		mov	r3, #1073758208
+  38              	.L4:
+  39 001e 9A68     		ldr	r2, [r3, #8]
+  40 0020 8242     		cmp	r2, r0
+  41 0022 FCD3     		bcc	.L4
+  42 0024 7047     		bx	lr
+  44              		.align	1
+  45              		.global	isFreeRtosRunning
+  46              		.thumb
+  47              		.thumb_func
+  49              	isFreeRtosRunning:
+  50              		@ args = 0, pretend = 0, frame = 0
+  51              		@ frame_needed = 0, uses_anonymous_args = 0
+  52 0026 10B5     		push	{r4, lr}
+  53 0028 074C     		ldr	r4, .L10
+  54 002a 2368     		ldr	r3, [r4, #0]
+  55 002c 1BB9     		cbnz	r3, .L9
+  56 002e 0120     		movs	r0, #1
+  57 0030 FFF7FEFF 		bl	xQueueCreateMutex
+  58 0034 2060     		str	r0, [r4, #0]
+  59              	.L9:
+  60 0036 FFF7FEFF 		bl	xTaskGetSchedulerState
+  61 003a A0F10103 		sub	r3, r0, #1
+  62 003e 5842     		rsbs	r0, r3, #0
+  63 0040 40EB0300 		adc	r0, r0, r3
+  64 0044 10BD     		pop	{r4, pc}
+  65              	.L11:
+  66 0046 00BF     		.align	2
+  67              	.L10:
+  68 0048 00000000 		.word	.LANCHOR0
+  70              		.align	1
+  71              		.global	delay_ms
+  72              		.thumb
+  73              		.thumb_func
+  75              	delay_ms:
+  76              		@ args = 0, pretend = 0, frame = 0
+  77              		@ frame_needed = 0, uses_anonymous_args = 0
+  78 004c 10B5     		push	{r4, lr}
+  79 004e 0446     		mov	r4, r0
+  80 0050 FFF7FEFF 		bl	isFreeRtosRunning
+  81 0054 20B1     		cbz	r0, .L13
+  82 0056 2046     		mov	r0, r4
+  83 0058 BDE81040 		pop	{r4, lr}
+  84 005c FFF7FEBF 		b	vTaskDelay
+  85              	.L13:
+  86 0060 4FF47A70 		mov	r0, #1000
+  87 0064 6043     		muls	r0, r4, r0
+  88 0066 BDE81040 		pop	{r4, lr}
+  89 006a FEE7     		b	delay_us
+  91              		.align	1
+  92              		.global	printMemoryInfo
+  93              		.thumb
+  94              		.thumb_func
+  96              	printMemoryInfo:
+  97              		@ args = 0, pretend = 0, frame = 16
+  98              		@ frame_needed = 0, uses_anonymous_args = 0
+  99 006c 10B5     		push	{r4, lr}
+ 100 006e 86B0     		sub	sp, sp, #24
+ 101 0070 0446     		mov	r4, r0
+ 102 0072 02A8     		add	r0, sp, #8
+ 103 0074 FFF7FEFF 		bl	getMemoryInfo
+ 104 0078 049B     		ldr	r3, [sp, #16]
+ 105 007a 2046     		mov	r0, r4
+ 106 007c 0093     		str	r3, [sp, #0]
+ 107 007e 059B     		ldr	r3, [sp, #20]
+ 108 0080 0349     		ldr	r1, .L15
+ 109 0082 0193     		str	r3, [sp, #4]
+ 110 0084 029A     		ldr	r2, [sp, #8]
+ 111 0086 039B     		ldr	r3, [sp, #12]
+ 112 0088 FFF7FEFF 		bl	sprintf
+ 113 008c 06B0     		add	sp, sp, #24
+ 114 008e 10BD     		pop	{r4, pc}
+ 115              	.L16:
+ 116              		.align	2
+ 117              	.L15:
+ 118 0090 00000000 		.word	.LC0
+ 120              		.align	1
+ 121              		.global	logBootInfo
+ 122              		.thumb
+ 123              		.thumb_func
+ 125              	logBootInfo:
+ 126              		@ args = 0, pretend = 0, frame = 208
+ 127              		@ frame_needed = 0, uses_anonymous_args = 0
+ 128 0094 10B5     		push	{r4, lr}
+ 129 0096 B8B0     		sub	sp, sp, #224
+ 130 0098 0B22     		movs	r2, #11
+ 131 009a 2649     		ldr	r1, .L23
+ 132 009c 0446     		mov	r4, r0
+ 133 009e 34A8     		add	r0, sp, #208
+ 134 00a0 FFF7FEFF 		bl	memcpy
+ 135 00a4 0021     		movs	r1, #0
+ 136 00a6 8022     		movs	r2, #128
+ 137 00a8 04A8     		add	r0, sp, #16
+ 138 00aa FFF7FEFF 		bl	memset
+ 139 00ae 0021     		movs	r1, #0
+ 140 00b0 1822     		movs	r2, #24
+ 141 00b2 2EA8     		add	r0, sp, #184
+ 142 00b4 FFF7FEFF 		bl	memset
+ 143 00b8 2EA8     		add	r0, sp, #184
+ 144 00ba FFF7FEFF 		bl	rtc_getDateTimeString
+ 145 00be FFF7FEFF 		bl	getRebootCause
+ 146 00c2 0428     		cmp	r0, #4
+ 147 00c4 0CD1     		bne	.L18
+ 148 00c6 1C4B     		ldr	r3, .L23+4
+ 149 00c8 04A8     		add	r0, sp, #16
+ 150 00ca D96C     		ldr	r1, [r3, #76]
+ 151 00cc 1A6D     		ldr	r2, [r3, #80]
+ 152 00ce 5B6D     		ldr	r3, [r3, #84]
+ 153 00d0 8DE80E00 		stmia	sp, {r1, r2, r3}
+ 154 00d4 1949     		ldr	r1, .L23+8
+ 155 00d6 2EAA     		add	r2, sp, #184
+ 156 00d8 2346     		mov	r3, r4
+ 157 00da FFF7FEFF 		bl	sprintf
+ 158 00de 05E0     		b	.L19
+ 159              	.L18:
+ 160 00e0 04A8     		add	r0, sp, #16
+ 161 00e2 1749     		ldr	r1, .L23+12
+ 162 00e4 2EAA     		add	r2, sp, #184
+ 163 00e6 2346     		mov	r3, r4
+ 164 00e8 FFF7FEFF 		bl	sprintf
+ 165              	.L19:
+ 166 00ec 0023     		movs	r3, #0
+ 167 00ee 24A8     		add	r0, sp, #144
+ 168 00f0 34A9     		add	r1, sp, #208
+ 169 00f2 1222     		movs	r2, #18
+ 170 00f4 3793     		str	r3, [sp, #220]
+ 171 00f6 FFF7FEFF 		bl	f_open
+ 172 00fa 80B9     		cbnz	r0, .L20
+ 173 00fc 24A8     		add	r0, sp, #144
+ 174 00fe 2799     		ldr	r1, [sp, #156]
+ 175 0100 FFF7FEFF 		bl	f_lseek
+ 176 0104 40B9     		cbnz	r0, .L21
+ 177 0106 04A8     		add	r0, sp, #16
+ 178 0108 FFF7FEFF 		bl	strlen
+ 179 010c 04A9     		add	r1, sp, #16
+ 180 010e 0246     		mov	r2, r0
+ 181 0110 37AB     		add	r3, sp, #220
+ 182 0112 24A8     		add	r0, sp, #144
+ 183 0114 FFF7FEFF 		bl	f_write
+ 184              	.L21:
+ 185 0118 24A8     		add	r0, sp, #144
+ 186 011a FFF7FEFF 		bl	f_close
+ 187              	.L20:
+ 188 011e 04A8     		add	r0, sp, #16
+ 189 0120 FFF7FEFF 		bl	strlen
+ 190 0124 379B     		ldr	r3, [sp, #220]
+ 191 0126 9842     		cmp	r0, r3
+ 192 0128 02D0     		beq	.L17
+ 193 012a 0648     		ldr	r0, .L23+16
+ 194 012c FFF7FEFF 		bl	puts
+ 195              	.L17:
+ 196 0130 38B0     		add	sp, sp, #224
+ 197 0132 10BD     		pop	{r4, pc}
+ 198              	.L24:
+ 199              		.align	2
+ 200              	.L23:
+ 201 0134 C9000000 		.word	.LC1
+ 202 0138 00400240 		.word	1073889280
+ 203 013c 65000000 		.word	.LC2
+ 204 0140 9B000000 		.word	.LC3
+ 205 0144 B1000000 		.word	.LC4
+ 207              		.global	critialRegionSemaphore
+ 208              		.section	.rodata.str1.1,"aMS",%progbits,1
+ 209              	.LC0:
+ 210 0000 4D656D6F 		.ascii	"Memory Information:\012Global Used   : %5u\012Heap "
+ 210      72792049 
+ 210      6E666F72 
+ 210      6D617469 
+ 210      6F6E3A0A 
+ 211 002d 20205573 		.ascii	"  Used   : %5u\012Heap Avail.   : %5u\012System Ava"
+ 211      65642020 
+ 211      203A2025 
+ 211      35750A48 
+ 211      65617020 
+ 212 005a 696C2E20 		.ascii	"il. : %5u\012\000"
+ 212      3A202535 
+ 212      750A00
+ 213              	.LC2:
+ 214 0065 25732C20 		.ascii	"%s, BAD BOOT (%s): PC: 0x%08X LR: 0x%08X PSR: 0x%08"
+ 214      42414420 
+ 214      424F4F54 
+ 214      20282573 
+ 214      293A2050 
+ 215 0098 580A00   		.ascii	"X\012\000"
+ 216              	.LC3:
+ 217 009b 25732C20 		.ascii	"%s, NORMAL BOOT (%s)\012\000"
+ 217      4E4F524D 
+ 217      414C2042 
+ 217      4F4F5420 
+ 217      28257329 
+ 218              	.LC4:
+ 219 00b1 4572726F 		.ascii	"Error writing boot info\000"
+ 219      72207772 
+ 219      6974696E 
+ 219      6720626F 
+ 219      6F742069 
+ 220              	.LC1:
+ 221 00c9 303A626F 		.ascii	"0:boot.csv\000"
+ 221      6F742E63 
+ 221      737600
+ 222              		.bss
+ 223              		.align	2
+ 224              		.set	.LANCHOR0,. + 0
+ 227              	critialRegionSemaphore:
+ 228 0000 00000000 		.space	4
+ 229              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 utilities.cpp
+C:\Users\Montoya\AppData\Local\Temp\ccPBzLDE.s:15     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\ccPBzLDE.s:20     .text:00000000 delay_us
+C:\Users\Montoya\AppData\Local\Temp\ccPBzLDE.s:49     .text:00000026 isFreeRtosRunning
+C:\Users\Montoya\AppData\Local\Temp\ccPBzLDE.s:68     .text:00000048 $d
+C:\Users\Montoya\AppData\Local\Temp\ccPBzLDE.s:70     .text:0000004c $t
+C:\Users\Montoya\AppData\Local\Temp\ccPBzLDE.s:75     .text:0000004c delay_ms
+C:\Users\Montoya\AppData\Local\Temp\ccPBzLDE.s:96     .text:0000006c printMemoryInfo
+C:\Users\Montoya\AppData\Local\Temp\ccPBzLDE.s:118    .text:00000090 $d
+C:\Users\Montoya\AppData\Local\Temp\ccPBzLDE.s:120    .text:00000094 $t
+C:\Users\Montoya\AppData\Local\Temp\ccPBzLDE.s:125    .text:00000094 logBootInfo
+C:\Users\Montoya\AppData\Local\Temp\ccPBzLDE.s:201    .text:00000134 $d
+C:\Users\Montoya\AppData\Local\Temp\ccPBzLDE.s:227    .bss:00000000 critialRegionSemaphore
+C:\Users\Montoya\AppData\Local\Temp\ccPBzLDE.s:223    .bss:00000000 $d
+
+UNDEFINED SYMBOLS
+xQueueCreateMutex
+xTaskGetSchedulerState
+vTaskDelay
+getMemoryInfo
+sprintf
+memcpy
+memset
+rtc_getDateTimeString
+getRebootCause
+f_open
+f_lseek
+strlen
+f_write
+f_close
+puts

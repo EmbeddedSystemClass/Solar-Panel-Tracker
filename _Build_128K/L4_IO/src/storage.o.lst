@@ -1,0 +1,241 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"storage.cpp"
+  14              		.text
+  15              		.align	1
+  16              		.global	_ZN7Storage4copyEPKcS1_PjS2_S2_
+  17              		.thumb
+  18              		.thumb_func
+  20              	_ZN7Storage4copyEPKcS1_PjS2_S2_:
+  21              		@ args = 4, pretend = 0, frame = 600
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, sl, fp, lr}
+  24 0004 ADF5177D 		sub	sp, sp, #604
+  25 0008 0546     		mov	r5, r0
+  26 000a 0DF50078 		add	r8, sp, #512
+  27 000e 0C46     		mov	r4, r1
+  28 0010 1746     		mov	r7, r2
+  29 0012 4046     		mov	r0, r8
+  30 0014 2946     		mov	r1, r5
+  31 0016 0122     		movs	r2, #1
+  32 0018 9A46     		mov	sl, r3
+  33 001a FFF7FEFF 		bl	f_open
+  34 001e 8346     		mov	fp, r0
+  35 0020 0028     		cmp	r0, #0
+  36 0022 35D1     		bne	.L2
+  37 0024 0DF50A79 		add	r9, sp, #552
+  38 0028 2146     		mov	r1, r4
+  39 002a 4846     		mov	r0, r9
+  40 002c 0A22     		movs	r2, #10
+  41 002e FFF7FEFF 		bl	f_open
+  42 0032 8346     		mov	fp, r0
+  43 0034 0446     		mov	r4, r0
+  44 0036 4046     		mov	r0, r8
+  45 0038 BBF1000F 		cmp	fp, #0
+  46 003c 26D1     		bne	.L14
+  47 003e CDF850B2 		str	fp, [sp, #592]
+  48 0042 CDF854B2 		str	fp, [sp, #596]
+  49 0046 5D46     		mov	r5, fp
+  50 0048 5E46     		mov	r6, fp
+  51              	.L11:
+  52 004a FFF7FEFF 		bl	xTaskGetTickCount
+  53 004e 6946     		mov	r1, sp
+  54 0050 8046     		mov	r8, r0
+  55 0052 4FF40072 		mov	r2, #512
+  56 0056 80A8     		add	r0, sp, #512
+  57 0058 94AB     		add	r3, sp, #592
+  58 005a FFF7FEFF 		bl	f_read
+  59 005e 8346     		mov	fp, r0
+  60 0060 30B9     		cbnz	r0, .L4
+  61 0062 949B     		ldr	r3, [sp, #592]
+  62 0064 23B1     		cbz	r3, .L4
+  63 0066 18E0     		b	.L15
+  64              	.L16:
+  65 0068 949B     		ldr	r3, [sp, #592]
+  66 006a 959A     		ldr	r2, [sp, #596]
+  67 006c 9A42     		cmp	r2, r3
+  68 006e 26D0     		beq	.L6
+  69              	.L4:
+  70 0070 07B1     		cbz	r7, .L7
+  71 0072 3E60     		str	r6, [r7, #0]
+  72              	.L7:
+  73 0074 BAF1000F 		cmp	sl, #0
+  74 0078 01D0     		beq	.L8
+  75 007a CAF80050 		str	r5, [sl, #0]
+  76              	.L8:
+  77 007e A09B     		ldr	r3, [sp, #640]
+  78 0080 03B1     		cbz	r3, .L9
+  79 0082 1C60     		str	r4, [r3, #0]
+  80              	.L9:
+  81 0084 80A8     		add	r0, sp, #512
+  82 0086 FFF7FEFF 		bl	f_close
+  83 008a 8AA8     		add	r0, sp, #552
+  84              	.L14:
+  85 008c FFF7FEFF 		bl	f_close
+  86              	.L2:
+  87 0090 5846     		mov	r0, fp
+  88 0092 0DF5177D 		add	sp, sp, #604
+  89 0096 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, sl, fp, pc}
+  90              	.L15:
+  91 009a FFF7FEFF 		bl	xTaskGetTickCount
+  92 009e C8EB0008 		rsb	r8, r8, r0
+  93 00a2 FFF7FEFF 		bl	xTaskGetTickCount
+  94 00a6 4644     		add	r6, r6, r8
+  95 00a8 6946     		mov	r1, sp
+  96 00aa 8046     		mov	r8, r0
+  97 00ac 949A     		ldr	r2, [sp, #592]
+  98 00ae 4846     		mov	r0, r9
+  99 00b0 95AB     		add	r3, sp, #596
+ 100 00b2 FFF7FEFF 		bl	f_write
+ 101 00b6 8346     		mov	fp, r0
+ 102 00b8 0028     		cmp	r0, #0
+ 103 00ba D9D1     		bne	.L4
+ 104 00bc D4E7     		b	.L16
+ 105              	.L6:
+ 106 00be FFF7FEFF 		bl	xTaskGetTickCount
+ 107 00c2 949B     		ldr	r3, [sp, #592]
+ 108 00c4 C8EB0008 		rsb	r8, r8, r0
+ 109 00c8 4544     		add	r5, r5, r8
+ 110 00ca E418     		adds	r4, r4, r3
+ 111 00cc BDE7     		b	.L11
+ 113              		.align	1
+ 114              		.global	_ZN7Storage4readEPKcPvjj
+ 115              		.thumb
+ 116              		.thumb_func
+ 118              	_ZN7Storage4readEPKcPvjj:
+ 119              		@ args = 0, pretend = 0, frame = 48
+ 120              		@ frame_needed = 0, uses_anonymous_args = 0
+ 121 00ce F0B5     		push	{r4, r5, r6, r7, lr}
+ 122 00d0 0746     		mov	r7, r0
+ 123 00d2 8DB0     		sub	sp, sp, #52
+ 124 00d4 0D46     		mov	r5, r1
+ 125 00d6 1446     		mov	r4, r2
+ 126 00d8 3946     		mov	r1, r7
+ 127 00da 1E46     		mov	r6, r3
+ 128 00dc 01A8     		add	r0, sp, #4
+ 129 00de 0023     		movs	r3, #0
+ 130 00e0 0122     		movs	r2, #1
+ 131 00e2 0B93     		str	r3, [sp, #44]
+ 132 00e4 FFF7FEFF 		bl	f_open
+ 133 00e8 0746     		mov	r7, r0
+ 134 00ea 70B9     		cbnz	r0, .L18
+ 135 00ec 1EB1     		cbz	r6, .L19
+ 136 00ee 01A8     		add	r0, sp, #4
+ 137 00f0 3146     		mov	r1, r6
+ 138 00f2 FFF7FEFF 		bl	f_lseek
+ 139              	.L19:
+ 140 00f6 01A8     		add	r0, sp, #4
+ 141 00f8 2946     		mov	r1, r5
+ 142 00fa 2246     		mov	r2, r4
+ 143 00fc 0BAB     		add	r3, sp, #44
+ 144 00fe FFF7FEFF 		bl	f_read
+ 145 0102 0746     		mov	r7, r0
+ 146 0104 01A8     		add	r0, sp, #4
+ 147 0106 FFF7FEFF 		bl	f_close
+ 148              	.L18:
+ 149 010a 3846     		mov	r0, r7
+ 150 010c 0DB0     		add	sp, sp, #52
+ 151 010e F0BD     		pop	{r4, r5, r6, r7, pc}
+ 153              		.align	1
+ 154              		.global	_ZN7Storage5writeEPKcPvjj
+ 155              		.thumb
+ 156              		.thumb_func
+ 158              	_ZN7Storage5writeEPKcPvjj:
+ 159              		@ args = 0, pretend = 0, frame = 48
+ 160              		@ frame_needed = 0, uses_anonymous_args = 0
+ 161 0110 F0B5     		push	{r4, r5, r6, r7, lr}
+ 162 0112 0746     		mov	r7, r0
+ 163 0114 8DB0     		sub	sp, sp, #52
+ 164 0116 0D46     		mov	r5, r1
+ 165 0118 1446     		mov	r4, r2
+ 166 011a 3946     		mov	r1, r7
+ 167 011c 1E46     		mov	r6, r3
+ 168 011e 01A8     		add	r0, sp, #4
+ 169 0120 0023     		movs	r3, #0
+ 170 0122 0A22     		movs	r2, #10
+ 171 0124 0B93     		str	r3, [sp, #44]
+ 172 0126 FFF7FEFF 		bl	f_open
+ 173 012a 0746     		mov	r7, r0
+ 174 012c 70B9     		cbnz	r0, .L21
+ 175 012e 1EB1     		cbz	r6, .L22
+ 176 0130 01A8     		add	r0, sp, #4
+ 177 0132 3146     		mov	r1, r6
+ 178 0134 FFF7FEFF 		bl	f_lseek
+ 179              	.L22:
+ 180 0138 01A8     		add	r0, sp, #4
+ 181 013a 2946     		mov	r1, r5
+ 182 013c 2246     		mov	r2, r4
+ 183 013e 0BAB     		add	r3, sp, #44
+ 184 0140 FFF7FEFF 		bl	f_write
+ 185 0144 0746     		mov	r7, r0
+ 186 0146 01A8     		add	r0, sp, #4
+ 187 0148 FFF7FEFF 		bl	f_close
+ 188              	.L21:
+ 189 014c 3846     		mov	r0, r7
+ 190 014e 0DB0     		add	sp, sp, #52
+ 191 0150 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 193              		.align	1
+ 194              		.global	_ZN7Storage6appendEPKcPvjj
+ 195              		.thumb
+ 196              		.thumb_func
+ 198              	_ZN7Storage6appendEPKcPvjj:
+ 199              		@ args = 0, pretend = 0, frame = 48
+ 200              		@ frame_needed = 0, uses_anonymous_args = 0
+ 201 0152 F0B5     		push	{r4, r5, r6, r7, lr}
+ 202 0154 0746     		mov	r7, r0
+ 203 0156 8DB0     		sub	sp, sp, #52
+ 204 0158 0D46     		mov	r5, r1
+ 205 015a 1446     		mov	r4, r2
+ 206 015c 3946     		mov	r1, r7
+ 207 015e 1E46     		mov	r6, r3
+ 208 0160 01A8     		add	r0, sp, #4
+ 209 0162 0023     		movs	r3, #0
+ 210 0164 1222     		movs	r2, #18
+ 211 0166 0B93     		str	r3, [sp, #44]
+ 212 0168 FFF7FEFF 		bl	f_open
+ 213 016c 0746     		mov	r7, r0
+ 214 016e 78B9     		cbnz	r0, .L24
+ 215 0170 01A8     		add	r0, sp, #4
+ 216 0172 3146     		mov	r1, r6
+ 217 0174 06B9     		cbnz	r6, .L27
+ 218 0176 0499     		ldr	r1, [sp, #16]
+ 219              	.L27:
+ 220 0178 FFF7FEFF 		bl	f_lseek
+ 221 017c 01A8     		add	r0, sp, #4
+ 222 017e 2946     		mov	r1, r5
+ 223 0180 2246     		mov	r2, r4
+ 224 0182 0BAB     		add	r3, sp, #44
+ 225 0184 FFF7FEFF 		bl	f_write
+ 226 0188 0746     		mov	r7, r0
+ 227 018a 01A8     		add	r0, sp, #4
+ 228 018c FFF7FEFF 		bl	f_close
+ 229              	.L24:
+ 230 0190 3846     		mov	r0, r7
+ 231 0192 0DB0     		add	sp, sp, #52
+ 232 0194 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 234              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 storage.cpp
+C:\Users\Montoya\AppData\Local\Temp\ccPO4X1I.s:15     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\ccPO4X1I.s:20     .text:00000000 _ZN7Storage4copyEPKcS1_PjS2_S2_
+C:\Users\Montoya\AppData\Local\Temp\ccPO4X1I.s:118    .text:000000ce _ZN7Storage4readEPKcPvjj
+C:\Users\Montoya\AppData\Local\Temp\ccPO4X1I.s:158    .text:00000110 _ZN7Storage5writeEPKcPvjj
+C:\Users\Montoya\AppData\Local\Temp\ccPO4X1I.s:198    .text:00000152 _ZN7Storage6appendEPKcPvjj
+
+UNDEFINED SYMBOLS
+f_open
+xTaskGetTickCount
+f_read
+f_close
+f_write
+f_lseek

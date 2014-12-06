@@ -1,0 +1,249 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"rtc_alarm.c"
+  14              		.text
+  15              		.align	1
+  16              		.thumb
+  17              		.thumb_func
+  19              	forEachRecurringAlarmCallback:
+  20              		@ args = 0, pretend = 0, frame = 8
+  21              		@ frame_needed = 0, uses_anonymous_args = 0
+  22 0000 07B5     		push	{r0, r1, r2, lr}
+  23 0002 0021     		movs	r1, #0
+  24 0004 02AA     		add	r2, sp, #8
+  25 0006 42F8041D 		str	r1, [r2, #-4]!
+  26 000a 0B46     		mov	r3, r1
+  27 000c FFF7FEFF 		bl	xQueueGenericSendFromISR
+  28 0010 0120     		movs	r0, #1
+  29 0012 0EBD     		pop	{r1, r2, r3, pc}
+  31              		.align	1
+  32              		.thumb
+  33              		.thumb_func
+  35              	forEachDailyAlarmCallback:
+  36              		@ args = 0, pretend = 0, frame = 16
+  37              		@ frame_needed = 0, uses_anonymous_args = 0
+  38 0014 1FB5     		push	{r0, r1, r2, r3, r4, lr}
+  39 0016 0446     		mov	r4, r0
+  40 0018 01A8     		add	r0, sp, #4
+  41 001a FFF7FEFF 		bl	rtc_gettime
+  42 001e 9DF80630 		ldrb	r3, [sp, #6]	@ zero_extendqisi2
+  43 0022 2279     		ldrb	r2, [r4, #4]	@ zero_extendqisi2
+  44 0024 03F01F03 		and	r3, r3, #31
+  45 0028 9A42     		cmp	r2, r3
+  46 002a 16D1     		bne	.L3
+  47 002c 9DF80530 		ldrb	r3, [sp, #5]	@ zero_extendqisi2
+  48 0030 6279     		ldrb	r2, [r4, #5]	@ zero_extendqisi2
+  49 0032 03F03F03 		and	r3, r3, #63
+  50 0036 9A42     		cmp	r2, r3
+  51 0038 0FD1     		bne	.L3
+  52 003a 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+  53 003e A279     		ldrb	r2, [r4, #6]	@ zero_extendqisi2
+  54 0040 03F03F03 		and	r3, r3, #63
+  55 0044 9A42     		cmp	r2, r3
+  56 0046 08D1     		bne	.L3
+  57 0048 2368     		ldr	r3, [r4, #0]
+  58 004a 0021     		movs	r1, #0
+  59 004c 04AA     		add	r2, sp, #16
+  60 004e 1868     		ldr	r0, [r3, #0]
+  61 0050 42F8041D 		str	r1, [r2, #-4]!
+  62 0054 0B46     		mov	r3, r1
+  63 0056 FFF7FEFF 		bl	xQueueGenericSendFromISR
+  64              	.L3:
+  65 005a 0120     		movs	r0, #1
+  66 005c 04B0     		add	sp, sp, #16
+  67 005e 10BD     		pop	{r4, pc}
+  69              		.align	1
+  70              		.global	rtc_EnableRecurringAlarm
+  71              		.thumb
+  72              		.thumb_func
+  74              	rtc_EnableRecurringAlarm:
+  75              		@ args = 0, pretend = 0, frame = 0
+  76              		@ frame_needed = 0, uses_anonymous_args = 0
+  77 0060 031C     		adds	r3, r0, #0
+  78 0062 18BF     		it	ne
+  79 0064 0123     		movne	r3, #1
+  80 0066 0329     		cmp	r1, #3
+  81 0068 8CBF     		ite	hi
+  82 006a 0023     		movhi	r3, #0
+  83 006c 03F00103 		andls	r3, r3, #1
+  84 0070 70B5     		push	{r4, r5, r6, lr}
+  85 0072 0446     		mov	r4, r0
+  86 0074 0D46     		mov	r5, r1
+  87 0076 C3B1     		cbz	r3, .L4
+  88 0078 0C4E     		ldr	r6, .L7
+  89 007a 56F82130 		ldr	r3, [r6, r1, lsl #2]
+  90 007e 63B9     		cbnz	r3, .L6
+  91 0080 FFF7FEFF 		bl	c_list_create
+  92 0084 0A4B     		ldr	r3, .L7+4
+  93 0086 46F82500 		str	r0, [r6, r5, lsl #2]
+  94 008a 1A7B     		ldrb	r2, [r3, #12]	@ zero_extendqisi2
+  95 008c 42F00102 		orr	r2, r2, #1
+  96 0090 1A73     		strb	r2, [r3, #12]
+  97 0092 084B     		ldr	r3, .L7+8
+  98 0094 4FF40032 		mov	r2, #131072
+  99 0098 1A60     		str	r2, [r3, #0]
+ 100              	.L6:
+ 101 009a 044B     		ldr	r3, .L7
+ 102 009c 2146     		mov	r1, r4
+ 103 009e 53F82500 		ldr	r0, [r3, r5, lsl #2]
+ 104 00a2 BDE87040 		pop	{r4, r5, r6, lr}
+ 105 00a6 FFF7FEBF 		b	c_list_insert_elm_end
+ 106              	.L4:
+ 107 00aa 70BD     		pop	{r4, r5, r6, pc}
+ 108              	.L8:
+ 109              		.align	2
+ 110              	.L7:
+ 111 00ac 00000000 		.word	.LANCHOR0
+ 112 00b0 00400240 		.word	1073889280
+ 113 00b4 00E100E0 		.word	-536813312
+ 115              		.align	1
+ 116              		.global	rtc_CreateDailyAlarm
+ 117              		.thumb
+ 118              		.thumb_func
+ 120              	rtc_CreateDailyAlarm:
+ 121              		@ args = 0, pretend = 0, frame = 8
+ 122              		@ frame_needed = 0, uses_anonymous_args = 0
+ 123 00b8 37B5     		push	{r0, r1, r2, r4, r5, lr}
+ 124 00ba 134C     		ldr	r4, .L11
+ 125 00bc 0190     		str	r0, [sp, #4]
+ 126 00be 2369     		ldr	r3, [r4, #16]
+ 127 00c0 0D46     		mov	r5, r1
+ 128 00c2 5BB9     		cbnz	r3, .L10
+ 129 00c4 FFF7FEFF 		bl	c_list_create
+ 130 00c8 104B     		ldr	r3, .L11+4
+ 131 00ca 2061     		str	r0, [r4, #16]
+ 132 00cc 1A7B     		ldrb	r2, [r3, #12]	@ zero_extendqisi2
+ 133 00ce 42F00102 		orr	r2, r2, #1
+ 134 00d2 1A73     		strb	r2, [r3, #12]
+ 135 00d4 0E4B     		ldr	r3, .L11+8
+ 136 00d6 4FF40032 		mov	r2, #131072
+ 137 00da 1A60     		str	r2, [r3, #0]
+ 138              	.L10:
+ 139 00dc 0820     		movs	r0, #8
+ 140 00de FFF7FEFF 		bl	malloc
+ 141 00e2 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+ 142 00e6 0446     		mov	r4, r0
+ 143 00e8 0371     		strb	r3, [r0, #4]
+ 144 00ea 9DF80530 		ldrb	r3, [sp, #5]	@ zero_extendqisi2
+ 145 00ee 0560     		str	r5, [r0, #0]
+ 146 00f0 4371     		strb	r3, [r0, #5]
+ 147 00f2 9DF80630 		ldrb	r3, [sp, #6]	@ zero_extendqisi2
+ 148 00f6 2146     		mov	r1, r4
+ 149 00f8 8371     		strb	r3, [r0, #6]
+ 150 00fa 034B     		ldr	r3, .L11
+ 151 00fc 1869     		ldr	r0, [r3, #16]
+ 152 00fe FFF7FEFF 		bl	c_list_insert_elm_end
+ 153 0102 201D     		adds	r0, r4, #4
+ 154 0104 3EBD     		pop	{r1, r2, r3, r4, r5, pc}
+ 155              	.L12:
+ 156 0106 00BF     		.align	2
+ 157              	.L11:
+ 158 0108 00000000 		.word	.LANCHOR0
+ 159 010c 00400240 		.word	1073889280
+ 160 0110 00E100E0 		.word	-536813312
+ 162              		.align	1
+ 163              		.global	RTC_IRQHandler
+ 164              		.thumb
+ 165              		.thumb_func
+ 167              	RTC_IRQHandler:
+ 168              		@ args = 0, pretend = 0, frame = 8
+ 169              		@ frame_needed = 0, uses_anonymous_args = 0
+ 170 0114 1FB5     		push	{r0, r1, r2, r3, r4, lr}
+ 171 0116 1D4B     		ldr	r3, .L15
+ 172 0118 02A8     		add	r0, sp, #8
+ 173 011a 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ 174 011c 1C4C     		ldr	r4, .L15+4
+ 175 011e 42F00102 		orr	r2, r2, #1
+ 176 0122 1A70     		strb	r2, [r3, #0]
+ 177 0124 FFF7FEFF 		bl	rtc_gettime
+ 178 0128 0022     		movs	r2, #0
+ 179 012a 1346     		mov	r3, r2
+ 180 012c 2068     		ldr	r0, [r4, #0]
+ 181 012e 1949     		ldr	r1, .L15+8
+ 182 0130 0092     		str	r2, [sp, #0]
+ 183 0132 FFF7FEFF 		bl	c_list_for_each_elm
+ 184 0136 9DF80820 		ldrb	r2, [sp, #8]	@ zero_extendqisi2
+ 185 013a 12F03F02 		ands	r2, r2, #63
+ 186 013e 1BD1     		bne	.L14
+ 187 0140 1346     		mov	r3, r2
+ 188 0142 6068     		ldr	r0, [r4, #4]
+ 189 0144 1349     		ldr	r1, .L15+8
+ 190 0146 0092     		str	r2, [sp, #0]
+ 191 0148 FFF7FEFF 		bl	c_list_for_each_elm
+ 192 014c 9DF80920 		ldrb	r2, [sp, #9]	@ zero_extendqisi2
+ 193 0150 12F03F02 		ands	r2, r2, #63
+ 194 0154 10D1     		bne	.L14
+ 195 0156 1346     		mov	r3, r2
+ 196 0158 A068     		ldr	r0, [r4, #8]
+ 197 015a 0E49     		ldr	r1, .L15+8
+ 198 015c 0092     		str	r2, [sp, #0]
+ 199 015e FFF7FEFF 		bl	c_list_for_each_elm
+ 200 0162 9DF80A20 		ldrb	r2, [sp, #10]	@ zero_extendqisi2
+ 201 0166 12F01F02 		ands	r2, r2, #31
+ 202 016a 05D1     		bne	.L14
+ 203 016c E068     		ldr	r0, [r4, #12]
+ 204 016e 0949     		ldr	r1, .L15+8
+ 205 0170 1346     		mov	r3, r2
+ 206 0172 0092     		str	r2, [sp, #0]
+ 207 0174 FFF7FEFF 		bl	c_list_for_each_elm
+ 208              	.L14:
+ 209 0178 0022     		movs	r2, #0
+ 210 017a 054B     		ldr	r3, .L15+4
+ 211 017c 0092     		str	r2, [sp, #0]
+ 212 017e 1869     		ldr	r0, [r3, #16]
+ 213 0180 0549     		ldr	r1, .L15+12
+ 214 0182 1346     		mov	r3, r2
+ 215 0184 FFF7FEFF 		bl	c_list_for_each_elm
+ 216 0188 1FBD     		pop	{r0, r1, r2, r3, r4, pc}
+ 217              	.L16:
+ 218 018a 00BF     		.align	2
+ 219              	.L15:
+ 220 018c 00400240 		.word	1073889280
+ 221 0190 00000000 		.word	.LANCHOR0
+ 222 0194 00000000 		.word	forEachRecurringAlarmCallback
+ 223 0198 00000000 		.word	forEachDailyAlarmCallback
+ 225              		.bss
+ 226              		.align	2
+ 227              		.set	.LANCHOR0,. + 0
+ 230              	mRecurAlarmList:
+ 231 0000 00000000 		.space	16
+ 231      00000000 
+ 231      00000000 
+ 231      00000000 
+ 234              	mDailyAlarmList:
+ 235 0010 00000000 		.space	4
+ 236              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 rtc_alarm.c
+C:\Users\Montoya\AppData\Local\Temp\ccxn0Y4l.s:15     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\ccxn0Y4l.s:19     .text:00000000 forEachRecurringAlarmCallback
+C:\Users\Montoya\AppData\Local\Temp\ccxn0Y4l.s:35     .text:00000014 forEachDailyAlarmCallback
+C:\Users\Montoya\AppData\Local\Temp\ccxn0Y4l.s:74     .text:00000060 rtc_EnableRecurringAlarm
+C:\Users\Montoya\AppData\Local\Temp\ccxn0Y4l.s:111    .text:000000ac $d
+C:\Users\Montoya\AppData\Local\Temp\ccxn0Y4l.s:115    .text:000000b8 $t
+C:\Users\Montoya\AppData\Local\Temp\ccxn0Y4l.s:120    .text:000000b8 rtc_CreateDailyAlarm
+C:\Users\Montoya\AppData\Local\Temp\ccxn0Y4l.s:158    .text:00000108 $d
+C:\Users\Montoya\AppData\Local\Temp\ccxn0Y4l.s:162    .text:00000114 $t
+C:\Users\Montoya\AppData\Local\Temp\ccxn0Y4l.s:167    .text:00000114 RTC_IRQHandler
+C:\Users\Montoya\AppData\Local\Temp\ccxn0Y4l.s:220    .text:0000018c $d
+C:\Users\Montoya\AppData\Local\Temp\ccxn0Y4l.s:226    .bss:00000000 $d
+C:\Users\Montoya\AppData\Local\Temp\ccxn0Y4l.s:230    .bss:00000000 mRecurAlarmList
+C:\Users\Montoya\AppData\Local\Temp\ccxn0Y4l.s:234    .bss:00000010 mDailyAlarmList
+
+UNDEFINED SYMBOLS
+xQueueGenericSendFromISR
+rtc_gettime
+c_list_create
+c_list_insert_elm_end
+malloc
+c_list_for_each_elm

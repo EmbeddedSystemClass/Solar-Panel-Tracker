@@ -1,0 +1,179 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"lightSensors.cpp"
+  14              		.section	.text.adc0_getReading,"axG",%progbits,adc0_getReading,comdat
+  15              		.align	1
+  16              		.weak	adc0_getReading
+  17              		.thumb
+  18              		.thumb_func
+  20              	adc0_getReading:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23              		@ link register save eliminated.
+  24 0000 0728     		cmp	r0, #7
+  25 0002 16D8     		bhi	.L4
+  26 0004 0C4B     		ldr	r3, .L6
+  27 0006 0D4A     		ldr	r2, .L6+4
+  28 0008 1968     		ldr	r1, [r3, #0]
+  29 000a 0A40     		ands	r2, r2, r1
+  30 000c 0121     		movs	r1, #1
+  31 000e 11FA00F0 		lsls	r0, r1, r0
+  32 0012 1A60     		str	r2, [r3, #0]
+  33 0014 1A68     		ldr	r2, [r3, #0]
+  34 0016 1043     		orrs	r0, r0, r2
+  35 0018 1860     		str	r0, [r3, #0]
+  36 001a 1A68     		ldr	r2, [r3, #0]
+  37 001c 42F08072 		orr	r2, r2, #16777216
+  38 0020 1A60     		str	r2, [r3, #0]
+  39              	.L3:
+  40 0022 5A68     		ldr	r2, [r3, #4]
+  41 0024 002A     		cmp	r2, #0
+  42 0026 FCDA     		bge	.L3
+  43 0028 034B     		ldr	r3, .L6
+  44 002a 5868     		ldr	r0, [r3, #4]
+  45 002c C0F30B10 		ubfx	r0, r0, #4, #12
+  46 0030 7047     		bx	lr
+  47              	.L4:
+  48 0032 0020     		movs	r0, #0
+  49 0034 7047     		bx	lr
+  50              	.L7:
+  51 0036 00BF     		.align	2
+  52              	.L6:
+  53 0038 00400340 		.word	1073954816
+  54 003c 00FFFFF8 		.word	-117440768
+  56              		.global	__aeabi_ui2d
+  57              		.global	__aeabi_dmul
+  58              		.global	__aeabi_d2uiz
+  59              		.text
+  60              		.align	1
+  61              		.global	_Z18getReadingInDegreeN12LightSensors4EnumE
+  62              		.thumb
+  63              		.thumb_func
+  65              	_Z18getReadingInDegreeN12LightSensors4EnumE:
+  66              		@ args = 0, pretend = 0, frame = 0
+  67              		@ frame_needed = 0, uses_anonymous_args = 0
+  68 0000 08B5     		push	{r3, lr}
+  69 0002 FFF7FEFF 		bl	adc0_getReading
+  70 0006 0005     		lsls	r0, r0, #20
+  71 0008 6423     		movs	r3, #100
+  72 000a 000D     		lsrs	r0, r0, #20
+  73 000c 5843     		muls	r0, r3, r0
+  74 000e FFF7FEFF 		bl	__aeabi_ui2d
+  75 0012 0022     		movs	r2, #0
+  76 0014 034B     		ldr	r3, .L9
+  77 0016 FFF7FEFF 		bl	__aeabi_dmul
+  78 001a FFF7FEFF 		bl	__aeabi_d2uiz
+  79 001e 80B2     		uxth	r0, r0
+  80 0020 08BD     		pop	{r3, pc}
+  81              	.L10:
+  82 0022 00BF     		.align	2
+  83              	.L9:
+  84 0024 0000303F 		.word	1060110336
+  86              		.global	__aeabi_dadd
+  87              		.align	1
+  88              		.global	_Z9getDegreeN12LightSensors4EnumES0_
+  89              		.thumb
+  90              		.thumb_func
+  92              	_Z9getDegreeN12LightSensors4EnumES0_:
+  93              		@ args = 0, pretend = 0, frame = 0
+  94              		@ frame_needed = 0, uses_anonymous_args = 0
+  95 0028 38B5     		push	{r3, r4, r5, lr}
+  96 002a 0D46     		mov	r5, r1
+  97 002c FFF7FEFF 		bl	adc0_getReading
+  98 0030 0405     		lsls	r4, r0, #20
+  99 0032 2846     		mov	r0, r5
+ 100 0034 FFF7FEFF 		bl	adc0_getReading
+ 101 0038 0305     		lsls	r3, r0, #20
+ 102 003a 240D     		lsrs	r4, r4, #20
+ 103 003c 1B0D     		lsrs	r3, r3, #20
+ 104 003e 9C42     		cmp	r4, r3
+ 105 0040 4FF05A00 		mov	r0, #90
+ 106 0044 0FD9     		bls	.L12
+ 107 0046 00FB1340 		mls	r0, r0, r3, r4
+ 108 004a FFF7FEFF 		bl	__aeabi_ui2d
+ 109 004e 0022     		movs	r2, #0
+ 110 0050 0023     		movs	r3, #0
+ 111 0052 FFF7FEFF 		bl	__aeabi_dadd
+ 112 0056 0022     		movs	r2, #0
+ 113 0058 0D4B     		ldr	r3, .L14+8
+ 114 005a FFF7FEFF 		bl	__aeabi_dmul
+ 115 005e FFF7FEFF 		bl	__aeabi_d2uiz
+ 116 0062 80B2     		uxth	r0, r0
+ 117 0064 38BD     		pop	{r3, r4, r5, pc}
+ 118              	.L12:
+ 119 0066 00FB1430 		mls	r0, r0, r4, r3
+ 120 006a FFF7FEFF 		bl	__aeabi_ui2d
+ 121 006e 06A3     		adr	r3, .L14
+ 122 0070 D3E90023 		ldrd	r2, [r3]
+ 123 0074 FFF7FEFF 		bl	__aeabi_dadd
+ 124 0078 0022     		movs	r2, #0
+ 125 007a 054B     		ldr	r3, .L14+8
+ 126 007c FFF7FEFF 		bl	__aeabi_dmul
+ 127 0080 FFF7FEFF 		bl	__aeabi_d2uiz
+ 128 0084 80B2     		uxth	r0, r0
+ 129 0086 38BD     		pop	{r3, r4, r5, pc}
+ 130              	.L15:
+ 131              		.align	3
+ 132              	.L14:
+ 133 0088 00000000 		.word	0
+ 134 008c 00805640 		.word	1079410688
+ 135 0090 0000303F 		.word	1060110336
+ 137              		.global	__aeabi_i2d
+ 138              		.align	1
+ 139              		.global	_Z10getReadingN12LightSensors4EnumE
+ 140              		.thumb
+ 141              		.thumb_func
+ 143              	_Z10getReadingN12LightSensors4EnumE:
+ 144              		@ args = 0, pretend = 0, frame = 0
+ 145              		@ frame_needed = 0, uses_anonymous_args = 0
+ 146 0094 08B5     		push	{r3, lr}
+ 147 0096 FFF7FEFF 		bl	adc0_getReading
+ 148 009a 0005     		lsls	r0, r0, #20
+ 149 009c 000D     		lsrs	r0, r0, #20
+ 150 009e FFF7FEFF 		bl	__aeabi_i2d
+ 151 00a2 0022     		movs	r2, #0
+ 152 00a4 064B     		ldr	r3, .L17+8
+ 153 00a6 FFF7FEFF 		bl	__aeabi_dmul
+ 154 00aa 03A3     		adr	r3, .L17
+ 155 00ac D3E90023 		ldrd	r2, [r3]
+ 156 00b0 FFF7FEFF 		bl	__aeabi_dmul
+ 157 00b4 08BD     		pop	{r3, pc}
+ 158              	.L18:
+ 159 00b6 00BF     		.align	3
+ 160              	.L17:
+ 161 00b8 00000000 		.word	0
+ 162 00bc 00806640 		.word	1080459264
+ 163 00c0 0000303F 		.word	1060110336
+ 165 00c4 AFF30080 		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 lightSensors.cpp
+C:\Users\Montoya\AppData\Local\Temp\ccrZHfWE.s:15     .text.adc0_getReading:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\ccrZHfWE.s:20     .text.adc0_getReading:00000000 adc0_getReading
+C:\Users\Montoya\AppData\Local\Temp\ccrZHfWE.s:53     .text.adc0_getReading:00000038 $d
+C:\Users\Montoya\AppData\Local\Temp\ccrZHfWE.s:60     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\ccrZHfWE.s:65     .text:00000000 _Z18getReadingInDegreeN12LightSensors4EnumE
+C:\Users\Montoya\AppData\Local\Temp\ccrZHfWE.s:84     .text:00000024 $d
+C:\Users\Montoya\AppData\Local\Temp\ccrZHfWE.s:87     .text:00000028 $t
+C:\Users\Montoya\AppData\Local\Temp\ccrZHfWE.s:92     .text:00000028 _Z9getDegreeN12LightSensors4EnumES0_
+C:\Users\Montoya\AppData\Local\Temp\ccrZHfWE.s:133    .text:00000088 $d
+C:\Users\Montoya\AppData\Local\Temp\ccrZHfWE.s:138    .text:00000094 $t
+C:\Users\Montoya\AppData\Local\Temp\ccrZHfWE.s:143    .text:00000094 _Z10getReadingN12LightSensors4EnumE
+C:\Users\Montoya\AppData\Local\Temp\ccrZHfWE.s:161    .text:000000b8 $d
+C:\Users\Montoya\AppData\Local\Temp\ccrZHfWE.s:165    .text:000000c4 $t
+
+UNDEFINED SYMBOLS
+__aeabi_ui2d
+__aeabi_dmul
+__aeabi_d2uiz
+__aeabi_dadd
+__aeabi_i2d

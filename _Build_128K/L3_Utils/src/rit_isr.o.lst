@@ -1,0 +1,147 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"rit_isr.c"
+  14              		.text
+  15              		.align	1
+  16              		.global	RIT_IRQHandler
+  17              		.thumb
+  18              		.thumb_func
+  20              	RIT_IRQHandler:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23 0000 08B5     		push	{r3, lr}
+  24 0002 0E4B     		ldr	r3, .L3
+  25 0004 1968     		ldr	r1, [r3, #0]
+  26 0006 5A68     		ldr	r2, [r3, #4]
+  27 0008 8A18     		adds	r2, r1, r2
+  28 000a 1A60     		str	r2, [r3, #0]
+  29 000c AA21     		movs	r1, #170
+  30 000e 4FF08042 		mov	r2, #1073741824
+  31 0012 1172     		strb	r1, [r2, #8]
+  32 0014 5521     		movs	r1, #85
+  33 0016 1172     		strb	r1, [r2, #8]
+  34 0018 9B68     		ldr	r3, [r3, #8]
+  35 001a 9847     		blx	r3
+  36 001c 084B     		ldr	r3, .L3+4
+  37 001e 1A7A     		ldrb	r2, [r3, #8]	@ zero_extendqisi2
+  38 0020 42F00102 		orr	r2, r2, #1
+  39 0024 1A72     		strb	r2, [r3, #8]
+  40 0026 FFF7FEFF 		bl	xTaskGetSchedulerState
+  41 002a 0128     		cmp	r0, #1
+  42 002c 04D0     		beq	.L1
+  43 002e 0020     		movs	r0, #0
+  44 0030 BDE80840 		pop	{r3, lr}
+  45 0034 FFF7FEBF 		b	__set_BASEPRI
+  46              	.L1:
+  47 0038 08BD     		pop	{r3, pc}
+  48              	.L4:
+  49 003a 00BF     		.align	2
+  50              	.L3:
+  51 003c 00000000 		.word	.LANCHOR0
+  52 0040 00000B40 		.word	1074462720
+  54              		.align	1
+  55              		.global	rit_get_timer_value_ms
+  56              		.thumb
+  57              		.thumb_func
+  59              	rit_get_timer_value_ms:
+  60              		@ args = 0, pretend = 0, frame = 0
+  61              		@ frame_needed = 0, uses_anonymous_args = 0
+  62              		@ link register save eliminated.
+  63 0044 014B     		ldr	r3, .L6
+  64 0046 1868     		ldr	r0, [r3, #0]
+  65 0048 7047     		bx	lr
+  66              	.L7:
+  67 004a 00BF     		.align	2
+  68              	.L6:
+  69 004c 00000000 		.word	.LANCHOR0
+  71              		.align	1
+  72              		.global	rit_setup_callback
+  73              		.thumb
+  74              		.thumb_func
+  76              	rit_setup_callback:
+  77              		@ args = 0, pretend = 0, frame = 0
+  78              		@ frame_needed = 0, uses_anonymous_args = 0
+  79 0050 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  80 0052 0446     		mov	r4, r0
+  81 0054 0E46     		mov	r6, r1
+  82 0056 60B3     		cbz	r0, .L8
+  83 0058 164F     		ldr	r7, .L12
+  84 005a 174B     		ldr	r3, .L12+4
+  85 005c 0029     		cmp	r1, #0
+  86 005e 08BF     		it	eq
+  87 0060 0126     		moveq	r6, #1
+  88 0062 7E60     		str	r6, [r7, #4]
+  89 0064 D3F8C420 		ldr	r2, [r3, #196]
+  90 0068 144D     		ldr	r5, .L12+8
+  91 006a 42F48032 		orr	r2, r2, #65536
+  92 006e C3F8C420 		str	r2, [r3, #196]
+  93 0072 D3F8AC21 		ldr	r2, [r3, #428]
+  94 0076 22F04062 		bic	r2, r2, #201326592
+  95 007a C3F8AC21 		str	r2, [r3, #428]
+  96 007e D3F8AC21 		ldr	r2, [r3, #428]
+  97 0082 42F08062 		orr	r2, r2, #67108864
+  98 0086 C3F8AC21 		str	r2, [r3, #428]
+  99 008a 0023     		movs	r3, #0
+ 100 008c 2B72     		strb	r3, [r5, #8]
+ 101 008e EB60     		str	r3, [r5, #12]
+ 102 0090 6B60     		str	r3, [r5, #4]
+ 103 0092 FFF7FEFF 		bl	getCpuClock
+ 104 0096 4FF47A73 		mov	r3, #1000
+ 105 009a B3FBF6F6 		udiv	r6, r3, r6
+ 106 009e B0FBF6F6 		udiv	r6, r0, r6
+ 107 00a2 0B23     		movs	r3, #11
+ 108 00a4 2E60     		str	r6, [r5, #0]
+ 109 00a6 2B72     		strb	r3, [r5, #8]
+ 110 00a8 054B     		ldr	r3, .L12+12
+ 111 00aa 4FF00052 		mov	r2, #536870912
+ 112 00ae BC60     		str	r4, [r7, #8]
+ 113 00b0 1A60     		str	r2, [r3, #0]
+ 114              	.L8:
+ 115 00b2 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 116              	.L13:
+ 117              		.align	2
+ 118              	.L12:
+ 119 00b4 00000000 		.word	.LANCHOR0
+ 120 00b8 00C00F40 		.word	1074774016
+ 121 00bc 00000B40 		.word	1074462720
+ 122 00c0 00E100E0 		.word	-536813312
+ 124              		.bss
+ 125              		.align	2
+ 126              		.set	.LANCHOR0,. + 0
+ 129              	rit_timer_value_ms:
+ 130 0000 00000000 		.space	4
+ 133              	rit_timer_tick_ms:
+ 134 0004 00000000 		.space	4
+ 137              	rit_callback:
+ 138 0008 00000000 		.space	4
+ 139              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 rit_isr.c
+C:\Users\Montoya\AppData\Local\Temp\cceOEk3d.s:15     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\cceOEk3d.s:20     .text:00000000 RIT_IRQHandler
+C:\Users\Montoya\AppData\Local\Temp\cceOEk3d.s:51     .text:0000003c $d
+C:\Users\Montoya\AppData\Local\Temp\cceOEk3d.s:54     .text:00000044 $t
+C:\Users\Montoya\AppData\Local\Temp\cceOEk3d.s:59     .text:00000044 rit_get_timer_value_ms
+C:\Users\Montoya\AppData\Local\Temp\cceOEk3d.s:69     .text:0000004c $d
+C:\Users\Montoya\AppData\Local\Temp\cceOEk3d.s:71     .text:00000050 $t
+C:\Users\Montoya\AppData\Local\Temp\cceOEk3d.s:76     .text:00000050 rit_setup_callback
+C:\Users\Montoya\AppData\Local\Temp\cceOEk3d.s:119    .text:000000b4 $d
+C:\Users\Montoya\AppData\Local\Temp\cceOEk3d.s:125    .bss:00000000 $d
+C:\Users\Montoya\AppData\Local\Temp\cceOEk3d.s:129    .bss:00000000 rit_timer_value_ms
+C:\Users\Montoya\AppData\Local\Temp\cceOEk3d.s:133    .bss:00000004 rit_timer_tick_ms
+C:\Users\Montoya\AppData\Local\Temp\cceOEk3d.s:137    .bss:00000008 rit_callback
+
+UNDEFINED SYMBOLS
+xTaskGetSchedulerState
+__set_BASEPRI
+getCpuClock

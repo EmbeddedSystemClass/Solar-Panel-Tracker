@@ -1,0 +1,205 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"memory.cpp"
+  14              		.text
+  15              		.align	1
+  16              		.global	_sbrk
+  17              		.thumb
+  18              		.thumb_func
+  20              	_sbrk:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23              		@ link register save eliminated.
+  24 0000 0E4B     		ldr	r3, .L5
+  25 0002 0246     		mov	r2, r0
+  26 0004 1968     		ldr	r1, [r3, #0]
+  27 0006 11B9     		cbnz	r1, .L2
+  28 0008 4FF08051 		mov	r1, #268435456
+  29 000c 1960     		str	r1, [r3, #0]
+  30              	.L2:
+  31 000e 1868     		ldr	r0, [r3, #0]
+  32 0010 8118     		adds	r1, r0, r2
+  33 0012 1960     		str	r1, [r3, #0]
+  34 0014 0A4B     		ldr	r3, .L5+4
+  35 0016 CB18     		adds	r3, r1, r3
+  36 0018 0A49     		ldr	r1, .L5+8
+  37 001a 8B42     		cmp	r3, r1
+  38 001c 9FBF     		itttt	ls
+  39 001e 0A4B     		ldrls	r3, .L5+12
+  40 0020 0649     		ldrls	r1, .L5
+  41 0022 D218     		addls	r2, r2, r3
+  42 0024 1846     		movls	r0, r3
+  43 0026 054B     		ldr	r3, .L5
+  44 0028 98BF     		it	ls
+  45 002a 0A60     		strls	r2, [r1, #0]
+  46 002c 1968     		ldr	r1, [r3, #0]
+  47 002e 074A     		ldr	r2, .L5+16
+  48 0030 9142     		cmp	r1, r2
+  49 0032 84BF     		itt	hi
+  50 0034 1A60     		strhi	r2, [r3, #0]
+  51 0036 0020     		movhi	r0, #0
+  52 0038 7047     		bx	lr
+  53              	.L6:
+  54 003a 00BF     		.align	2
+  55              	.L5:
+  56 003c 00000000 		.word	.LANCHOR0
+  57 0040 FF7FFFEF 		.word	-268468225
+  58 0044 FE3F0710 		.word	268910590
+  59 0048 00000000 		.word	_pvHeapStart
+  60 004c 00400820 		.word	537411584
+  62              		.align	1
+  63              		.global	_Znwj
+  64              		.thumb
+  65              		.thumb_func
+  67              	_Znwj:
+  68              		@ args = 0, pretend = 0, frame = 0
+  69              		@ frame_needed = 0, uses_anonymous_args = 0
+  70              		@ link register save eliminated.
+  71 0050 FFF7FEBF 		b	malloc
+  73              		.align	1
+  74              		.global	_Znaj
+  75              		.thumb
+  76              		.thumb_func
+  78              	_Znaj:
+  79              		@ args = 0, pretend = 0, frame = 0
+  80              		@ frame_needed = 0, uses_anonymous_args = 0
+  81              		@ link register save eliminated.
+  82 0054 FFF7FEBF 		b	malloc
+  84              		.align	1
+  85              		.global	_ZdlPv
+  86              		.thumb
+  87              		.thumb_func
+  89              	_ZdlPv:
+  90              		@ args = 0, pretend = 0, frame = 0
+  91              		@ frame_needed = 0, uses_anonymous_args = 0
+  92              		@ link register save eliminated.
+  93 0058 FFF7FEBF 		b	free
+  95              		.align	1
+  96              		.global	_ZdaPv
+  97              		.thumb
+  98              		.thumb_func
+ 100              	_ZdaPv:
+ 101              		@ args = 0, pretend = 0, frame = 0
+ 102              		@ frame_needed = 0, uses_anonymous_args = 0
+ 103              		@ link register save eliminated.
+ 104 005c FFF7FEBF 		b	free
+ 106              		.align	1
+ 107              		.global	getMemoryInfo
+ 108              		.thumb
+ 109              		.thumb_func
+ 111              	getMemoryInfo:
+ 112              		@ args = 0, pretend = 0, frame = 40
+ 113              		@ frame_needed = 0, uses_anonymous_args = 0
+ 114 0060 30B5     		push	{r4, r5, lr}
+ 115 0062 8BB0     		sub	sp, sp, #44
+ 116 0064 0446     		mov	r4, r0
+ 117 0066 6846     		mov	r0, sp
+ 118 0068 FFF7FEFF 		bl	mallinfo
+ 119 006c 079A     		ldr	r2, [sp, #28]
+ 120 006e 089B     		ldr	r3, [sp, #32]
+ 121 0070 B2F5803F 		cmp	r2, #65536
+ 122 0074 A360     		str	r3, [r4, #8]
+ 123 0076 88BF     		it	hi
+ 124 0078 114B     		ldrhi	r3, .L16
+ 125 007a 6260     		str	r2, [r4, #4]
+ 126 007c 84BF     		itt	hi
+ 127 007e D318     		addhi	r3, r2, r3
+ 128 0080 6360     		strhi	r3, [r4, #4]
+ 129 0082 0023     		movs	r3, #0
+ 130 0084 E360     		str	r3, [r4, #12]
+ 131 0086 0F4B     		ldr	r3, .L16+4
+ 132 0088 0F4A     		ldr	r2, .L16+8
+ 133 008a 1B68     		ldr	r3, [r3, #0]
+ 134 008c 0F4D     		ldr	r5, .L16+12
+ 135 008e 9342     		cmp	r3, r2
+ 136 0090 9CBF     		itt	ls
+ 137 0092 EB18     		addls	r3, r5, r3
+ 138 0094 C3F18053 		rsbls	r3, r3, #268435456
+ 139 0098 2560     		str	r5, [r4, #0]
+ 140 009a 98BF     		it	ls
+ 141 009c 03F58033 		addls	r3, r3, #65536
+ 142 00a0 0AD9     		bls	.L15
+ 143 00a2 0B4A     		ldr	r2, .L16+16
+ 144 00a4 9342     		cmp	r3, r2
+ 145 00a6 08D8     		bhi	.L11
+ 146 00a8 0A4D     		ldr	r5, .L16+20
+ 147 00aa C5F18045 		rsb	r5, r5, #1073741824
+ 148 00ae 05F58015 		add	r5, r5, #1048576
+ 149 00b2 EB1A     		subs	r3, r5, r3
+ 150 00b4 002B     		cmp	r3, #0
+ 151 00b6 00DD     		ble	.L11
+ 152              	.L15:
+ 153 00b8 E360     		str	r3, [r4, #12]
+ 154              	.L11:
+ 155 00ba 2046     		mov	r0, r4
+ 156 00bc 0BB0     		add	sp, sp, #44
+ 157 00be 30BD     		pop	{r4, r5, pc}
+ 158              	.L17:
+ 159              		.align	2
+ 160              	.L16:
+ 161 00c0 00C0F8EF 		.word	-268910592
+ 162 00c4 00000000 		.word	.LANCHOR0
+ 163 00c8 00800010 		.word	268468224
+ 164 00cc 0040F8DF 		.word	_pvHeapStart-537378816
+ 165 00d0 FF3F0820 		.word	537411583
+ 166 00d4 00000000 		.word	_pvHeapStart
+ 168              		.align	1
+ 169              		.global	__aeabi_atexit
+ 170              		.thumb
+ 171              		.thumb_func
+ 173              	__aeabi_atexit:
+ 174              		@ args = 0, pretend = 0, frame = 0
+ 175              		@ frame_needed = 0, uses_anonymous_args = 0
+ 176              		@ link register save eliminated.
+ 177 00d8 0020     		movs	r0, #0
+ 178 00da 7047     		bx	lr
+ 180              		.align	1
+ 181              		.global	_ZN9__gnu_cxx27__verbose_terminate_handlerEv
+ 182              		.thumb
+ 183              		.thumb_func
+ 185              	_ZN9__gnu_cxx27__verbose_terminate_handlerEv:
+ 186              		@ Volatile: function does not return.
+ 187              		@ args = 0, pretend = 0, frame = 0
+ 188              		@ frame_needed = 0, uses_anonymous_args = 0
+ 189              		@ link register save eliminated.
+ 190              	.L20:
+ 191 00dc FEE7     		b	.L20
+ 193 00de 00BF     		.bss
+ 194              		.align	2
+ 195              		.set	.LANCHOR0,. + 0
+ 198              	_ZL13next_heap_ptr:
+ 199 0000 00000000 		.space	4
+ 200              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 memory.cpp
+C:\Users\Montoya\AppData\Local\Temp\cclJNJct.s:15     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\cclJNJct.s:20     .text:00000000 _sbrk
+C:\Users\Montoya\AppData\Local\Temp\cclJNJct.s:56     .text:0000003c $d
+C:\Users\Montoya\AppData\Local\Temp\cclJNJct.s:62     .text:00000050 $t
+C:\Users\Montoya\AppData\Local\Temp\cclJNJct.s:67     .text:00000050 _Znwj
+C:\Users\Montoya\AppData\Local\Temp\cclJNJct.s:78     .text:00000054 _Znaj
+C:\Users\Montoya\AppData\Local\Temp\cclJNJct.s:89     .text:00000058 _ZdlPv
+C:\Users\Montoya\AppData\Local\Temp\cclJNJct.s:100    .text:0000005c _ZdaPv
+C:\Users\Montoya\AppData\Local\Temp\cclJNJct.s:111    .text:00000060 getMemoryInfo
+C:\Users\Montoya\AppData\Local\Temp\cclJNJct.s:161    .text:000000c0 $d
+C:\Users\Montoya\AppData\Local\Temp\cclJNJct.s:168    .text:000000d8 $t
+C:\Users\Montoya\AppData\Local\Temp\cclJNJct.s:173    .text:000000d8 __aeabi_atexit
+C:\Users\Montoya\AppData\Local\Temp\cclJNJct.s:185    .text:000000dc _ZN9__gnu_cxx27__verbose_terminate_handlerEv
+C:\Users\Montoya\AppData\Local\Temp\cclJNJct.s:194    .bss:00000000 $d
+C:\Users\Montoya\AppData\Local\Temp\cclJNJct.s:198    .bss:00000000 _ZL13next_heap_ptr
+
+UNDEFINED SYMBOLS
+_pvHeapStart
+malloc
+free
+mallinfo

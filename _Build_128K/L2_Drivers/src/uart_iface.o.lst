@@ -1,0 +1,204 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"uart_iface.cpp"
+  14              		.text
+  15              		.align	1
+  16              		.global	_ZN9UartIface3putEPKcj
+  17              		.thumb
+  18              		.thumb_func
+  20              	_ZN9UartIface3putEPKcj:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23 0000 70B5     		push	{r4, r5, r6, lr}
+  24 0002 0546     		mov	r5, r0
+  25 0004 1646     		mov	r6, r2
+  26 0006 0C46     		mov	r4, r1
+  27 0008 05E0     		b	.L2
+  28              	.L4:
+  29 000a 2B68     		ldr	r3, [r5, #0]
+  30 000c 2846     		mov	r0, r5
+  31 000e 5B68     		ldr	r3, [r3, #4]
+  32 0010 3246     		mov	r2, r6
+  33 0012 9847     		blx	r3
+  34 0014 20B1     		cbz	r0, .L3
+  35              	.L2:
+  36 0016 14F8011B 		ldrb	r1, [r4], #1	@ zero_extendqisi2
+  37 001a 0029     		cmp	r1, #0
+  38 001c F5D1     		bne	.L4
+  39 001e 0120     		movs	r0, #1
+  40              	.L3:
+  41 0020 70BD     		pop	{r4, r5, r6, pc}
+  43              		.align	1
+  44              		.global	_ZN9UartIface4putsEPKcj
+  45              		.thumb
+  46              		.thumb_func
+  48              	_ZN9UartIface4putsEPKcj:
+  49              		@ args = 0, pretend = 0, frame = 0
+  50              		@ frame_needed = 0, uses_anonymous_args = 0
+  51 0022 38B5     		push	{r3, r4, r5, lr}
+  52 0024 0546     		mov	r5, r0
+  53 0026 1446     		mov	r4, r2
+  54 0028 FFF7FEFF 		bl	_ZN9UartIface3putEPKcj
+  55 002c 0249     		ldr	r1, .L7
+  56 002e 2846     		mov	r0, r5
+  57 0030 2246     		mov	r2, r4
+  58 0032 BDE83840 		pop	{r3, r4, r5, lr}
+  59 0036 FEE7     		b	_ZN9UartIface3putEPKcj
+  60              	.L8:
+  61              		.align	2
+  62              	.L7:
+  63 0038 00000000 		.word	.LC0
+  65              		.align	1
+  66              		.global	_ZN9UartIface4getsEPcij
+  67              		.thumb
+  68              		.thumb_func
+  70              	_ZN9UartIface4getsEPcij:
+  71              		@ args = 0, pretend = 0, frame = 8
+  72              		@ frame_needed = 0, uses_anonymous_args = 0
+  73 003c 2DE9F743 		push	{r0, r1, r2, r4, r5, r6, r7, r8, r9, lr}
+  74 0040 0026     		movs	r6, #0
+  75 0042 02AF     		add	r7, sp, #8
+  76 0044 0546     		mov	r5, r0
+  77 0046 0C46     		mov	r4, r1
+  78 0048 9146     		mov	r9, r2
+  79 004a 9846     		mov	r8, r3
+  80 004c 07F8016D 		strb	r6, [r7, #-1]!
+  81 0050 12E0     		b	.L10
+  82              	.L13:
+  83 0052 9DF80730 		ldrb	r3, [sp, #7]	@ zero_extendqisi2
+  84 0056 B3F10D02 		subs	r2, r3, #13
+  85 005a 18BF     		it	ne
+  86 005c 0122     		movne	r2, #1
+  87 005e 0A2B     		cmp	r3, #10
+  88 0060 0CBF     		ite	eq
+  89 0062 0022     		moveq	r2, #0
+  90 0064 02F00102 		andne	r2, r2, #1
+  91 0068 0AB1     		cbz	r2, .L11
+  92 006a 04F8013B 		strb	r3, [r4], #1
+  93              	.L11:
+  94 006e 0136     		adds	r6, r6, #1
+  95 0070 4E45     		cmp	r6, r9
+  96 0072 0ADA     		bge	.L15
+  97 0074 0D2B     		cmp	r3, #13
+  98 0076 0AD0     		beq	.L16
+  99              	.L10:
+ 100 0078 2B68     		ldr	r3, [r5, #0]
+ 101 007a 2846     		mov	r0, r5
+ 102 007c 1B68     		ldr	r3, [r3, #0]
+ 103 007e 3946     		mov	r1, r7
+ 104 0080 4246     		mov	r2, r8
+ 105 0082 9847     		blx	r3
+ 106 0084 0028     		cmp	r0, #0
+ 107 0086 E4D1     		bne	.L13
+ 108 0088 02E0     		b	.L12
+ 109              	.L15:
+ 110 008a 0020     		movs	r0, #0
+ 111 008c 00E0     		b	.L12
+ 112              	.L16:
+ 113 008e 0120     		movs	r0, #1
+ 114              	.L12:
+ 115 0090 002E     		cmp	r6, #0
+ 116 0092 01DD     		ble	.L14
+ 117 0094 0023     		movs	r3, #0
+ 118 0096 2370     		strb	r3, [r4, #0]
+ 119              	.L14:
+ 120 0098 BDE8FE83 		pop	{r1, r2, r3, r4, r5, r6, r7, r8, r9, pc}
+ 122              		.align	1
+ 123              		.global	_ZN9UartIface6printfEPKcz
+ 124              		.thumb
+ 125              		.thumb_func
+ 127              	_ZN9UartIface6printfEPKcz:
+ 128              		@ args = 4, pretend = 12, frame = 264
+ 129              		@ frame_needed = 0, uses_anonymous_args = 1
+ 130 009c 0EB4     		push	{r1, r2, r3}
+ 131 009e 70B5     		push	{r4, r5, r6, lr}
+ 132 00a0 C3B0     		sub	sp, sp, #268
+ 133 00a2 47AD     		add	r5, sp, #284
+ 134 00a4 55F8046B 		ldr	r6, [r5], #4
+ 135 00a8 0021     		movs	r1, #0
+ 136 00aa 4FF48072 		mov	r2, #256
+ 137 00ae 0446     		mov	r4, r0
+ 138 00b0 01A8     		add	r0, sp, #4
+ 139 00b2 4195     		str	r5, [sp, #260]
+ 140 00b4 FFF7FEFF 		bl	memset
+ 141 00b8 2B46     		mov	r3, r5
+ 142 00ba FF21     		movs	r1, #255
+ 143 00bc 01A8     		add	r0, sp, #4
+ 144 00be 3246     		mov	r2, r6
+ 145 00c0 FFF7FEFF 		bl	vsniprintf
+ 146 00c4 431E     		subs	r3, r0, #1
+ 147 00c6 FF2B     		cmp	r3, #255
+ 148 00c8 0546     		mov	r5, r0
+ 149 00ca 05D8     		bhi	.L18
+ 150 00cc 2046     		mov	r0, r4
+ 151 00ce 01A9     		add	r1, sp, #4
+ 152 00d0 4FF0FF32 		mov	r2, #-1
+ 153 00d4 FFF7FEFF 		bl	_ZN9UartIface3putEPKcj
+ 154              	.L18:
+ 155 00d8 2846     		mov	r0, r5
+ 156 00da 43B0     		add	sp, sp, #268
+ 157 00dc BDE87040 		pop	{r4, r5, r6, lr}
+ 158 00e0 03B0     		add	sp, sp, #12
+ 159 00e2 7047     		bx	lr
+ 161              		.align	1
+ 162              		.global	_ZN9UartIface5scanfEPKcz
+ 163              		.thumb
+ 164              		.thumb_func
+ 166              	_ZN9UartIface5scanfEPKcz:
+ 167              		@ args = 4, pretend = 12, frame = 264
+ 168              		@ frame_needed = 0, uses_anonymous_args = 1
+ 169 00e4 0EB4     		push	{r1, r2, r3}
+ 170 00e6 30B5     		push	{r4, r5, lr}
+ 171 00e8 C2B0     		sub	sp, sp, #264
+ 172 00ea 45AB     		add	r3, sp, #276
+ 173 00ec 53F8044B 		ldr	r4, [r3], #4
+ 174 00f0 0546     		mov	r5, r0
+ 175 00f2 0021     		movs	r1, #0
+ 176 00f4 4FF48072 		mov	r2, #256
+ 177 00f8 01A8     		add	r0, sp, #4
+ 178 00fa 4193     		str	r3, [sp, #260]
+ 179 00fc FFF7FEFF 		bl	memset
+ 180 0100 2846     		mov	r0, r5
+ 181 0102 01A9     		add	r1, sp, #4
+ 182 0104 4FF48072 		mov	r2, #256
+ 183 0108 4FF0FF33 		mov	r3, #-1
+ 184 010c FFF7FEFF 		bl	_ZN9UartIface4getsEPcij
+ 185 0110 20B1     		cbz	r0, .L20
+ 186 0112 01A8     		add	r0, sp, #4
+ 187 0114 2146     		mov	r1, r4
+ 188 0116 419A     		ldr	r2, [sp, #260]
+ 189 0118 FFF7FEFF 		bl	vsiscanf
+ 190              	.L20:
+ 191 011c 42B0     		add	sp, sp, #264
+ 192 011e BDE83040 		pop	{r4, r5, lr}
+ 193 0122 03B0     		add	sp, sp, #12
+ 194 0124 7047     		bx	lr
+ 196 0126 00BF     		.section	.rodata.str1.1,"aMS",%progbits,1
+ 197              	.LC0:
+ 198 0000 0D0A00   		.ascii	"\015\012\000"
+ 199              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 uart_iface.cpp
+C:\Users\Montoya\AppData\Local\Temp\ccDCktLZ.s:15     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\ccDCktLZ.s:20     .text:00000000 _ZN9UartIface3putEPKcj
+C:\Users\Montoya\AppData\Local\Temp\ccDCktLZ.s:48     .text:00000022 _ZN9UartIface4putsEPKcj
+C:\Users\Montoya\AppData\Local\Temp\ccDCktLZ.s:63     .text:00000038 $d
+C:\Users\Montoya\AppData\Local\Temp\ccDCktLZ.s:65     .text:0000003c $t
+C:\Users\Montoya\AppData\Local\Temp\ccDCktLZ.s:70     .text:0000003c _ZN9UartIface4getsEPcij
+C:\Users\Montoya\AppData\Local\Temp\ccDCktLZ.s:127    .text:0000009c _ZN9UartIface6printfEPKcz
+C:\Users\Montoya\AppData\Local\Temp\ccDCktLZ.s:166    .text:000000e4 _ZN9UartIface5scanfEPKcz
+
+UNDEFINED SYMBOLS
+memset
+vsniprintf
+vsiscanf

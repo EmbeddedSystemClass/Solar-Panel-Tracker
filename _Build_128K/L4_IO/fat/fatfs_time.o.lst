@@ -1,0 +1,52 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"fatfs_time.c"
+  14              		.text
+  15              		.align	1
+  16              		.global	get_fattime
+  17              		.thumb
+  18              		.thumb_func
+  20              	get_fattime:
+  21              		@ args = 0, pretend = 0, frame = 8
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23 0000 07B5     		push	{r0, r1, r2, lr}
+  24 0002 6846     		mov	r0, sp
+  25 0004 FFF7FEFF 		bl	rtc_gettime
+  26 0008 9DF80520 		ldrb	r2, [sp, #5]	@ zero_extendqisi2
+  27 000c 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+  28 0010 02F00F02 		and	r2, r2, #15
+  29 0014 03F01F03 		and	r3, r3, #31
+  30 0018 5205     		lsls	r2, r2, #21
+  31 001a 42EA0342 		orr	r2, r2, r3, lsl #16
+  32 001e 9DF80230 		ldrb	r3, [sp, #2]	@ zero_extendqisi2
+  33 0022 9DF80100 		ldrb	r0, [sp, #1]	@ zero_extendqisi2
+  34 0026 03F01F03 		and	r3, r3, #31
+  35 002a 42EAC323 		orr	r3, r2, r3, lsl #11
+  36 002e 00F03F00 		and	r0, r0, #63
+  37 0032 43EA4010 		orr	r0, r3, r0, lsl #5
+  38 0036 9DF80030 		ldrb	r3, [sp, #0]	@ zero_extendqisi2
+  39 003a C3F34403 		ubfx	r3, r3, #1, #5
+  40 003e 1843     		orrs	r0, r0, r3
+  41 0040 BDF80630 		ldrh	r3, [sp, #6]
+  42 0044 5B06     		lsls	r3, r3, #25
+  43 0046 03F10843 		add	r3, r3, #-2013265920
+  44 004a 1843     		orrs	r0, r0, r3
+  45 004c 0EBD     		pop	{r1, r2, r3, pc}
+  47              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 fatfs_time.c
+C:\Users\Montoya\AppData\Local\Temp\cct4koNQ.s:15     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\cct4koNQ.s:20     .text:00000000 get_fattime
+
+UNDEFINED SYMBOLS
+rtc_gettime

@@ -1,0 +1,189 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"rtc.c"
+  14              		.text
+  15              		.align	1
+  16              		.global	rtc_gettime
+  17              		.thumb
+  18              		.thumb_func
+  20              	rtc_gettime:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23              		@ link register save eliminated.
+  24 0000 034A     		ldr	r2, .L2
+  25 0002 0346     		mov	r3, r0
+  26 0004 92E80300 		ldmia	r2, {r0, r1}
+  27 0008 83E80300 		stmia	r3, {r0, r1}
+  28 000c 1846     		mov	r0, r3
+  29 000e 7047     		bx	lr
+  30              	.L3:
+  31              		.align	2
+  32              	.L2:
+  33 0010 14400240 		.word	1073889300
+  35              		.align	1
+  36              		.global	rtc_settime
+  37              		.thumb
+  38              		.thumb_func
+  40              	rtc_settime:
+  41              		@ args = 0, pretend = 0, frame = 0
+  42              		@ frame_needed = 0, uses_anonymous_args = 0
+  43              		@ link register save eliminated.
+  44 0014 0278     		ldrb	r2, [r0, #0]	@ zero_extendqisi2
+  45 0016 114B     		ldr	r3, .L5
+  46 0018 C2F30502 		ubfx	r2, r2, #0, #6
+  47 001c 83F82020 		strb	r2, [r3, #32]
+  48 0020 4278     		ldrb	r2, [r0, #1]	@ zero_extendqisi2
+  49 0022 C2F30502 		ubfx	r2, r2, #0, #6
+  50 0026 83F82420 		strb	r2, [r3, #36]
+  51 002a 8278     		ldrb	r2, [r0, #2]	@ zero_extendqisi2
+  52 002c C2F30402 		ubfx	r2, r2, #0, #5
+  53 0030 83F82820 		strb	r2, [r3, #40]
+  54 0034 C278     		ldrb	r2, [r0, #3]	@ zero_extendqisi2
+  55 0036 C2F30202 		ubfx	r2, r2, #0, #3
+  56 003a 83F83020 		strb	r2, [r3, #48]
+  57 003e 0279     		ldrb	r2, [r0, #4]	@ zero_extendqisi2
+  58 0040 C2F30402 		ubfx	r2, r2, #0, #5
+  59 0044 83F82C20 		strb	r2, [r3, #44]
+  60 0048 4279     		ldrb	r2, [r0, #5]	@ zero_extendqisi2
+  61 004a C2F30302 		ubfx	r2, r2, #0, #4
+  62 004e 83F83820 		strb	r2, [r3, #56]
+  63 0052 C288     		ldrh	r2, [r0, #6]
+  64 0054 C2F30B02 		ubfx	r2, r2, #0, #12
+  65 0058 9A87     		strh	r2, [r3, #60]	@ movhi
+  66 005a 7047     		bx	lr
+  67              	.L6:
+  68              		.align	2
+  69              	.L5:
+  70 005c 00400240 		.word	1073889280
+  72              		.align	1
+  73              		.global	rtc_initialize
+  74              		.thumb
+  75              		.thumb_func
+  77              	rtc_initialize:
+  78              		@ args = 0, pretend = 0, frame = 8
+  79              		@ frame_needed = 0, uses_anonymous_args = 0
+  80 0060 07B5     		push	{r0, r1, r2, lr}
+  81 0062 254B     		ldr	r3, .L10
+  82 0064 6846     		mov	r0, sp
+  83 0066 D3F8C420 		ldr	r2, [r3, #196]
+  84 006a 42F40072 		orr	r2, r2, #512
+  85 006e C3F8C420 		str	r2, [r3, #196]
+  86 0072 0122     		movs	r2, #1
+  87 0074 A3F55823 		sub	r3, r3, #884736
+  88 0078 1A72     		strb	r2, [r3, #8]
+  89 007a FFF7FEFF 		bl	rtc_gettime
+  90 007e BDF80630 		ldrh	r3, [sp, #6]
+  91 0082 40F2DB72 		movw	r2, #2011
+  92 0086 C3F30B03 		ubfx	r3, r3, #0, #12
+  93 008a 9BB2     		uxth	r3, r3
+  94 008c 9342     		cmp	r3, r2
+  95 008e 02DD     		ble	.L8
+  96 0090 0932     		adds	r2, r2, #9
+  97 0092 9342     		cmp	r3, r2
+  98 0094 2FDD     		ble	.L7
+  99              	.L8:
+ 100 0096 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+ 101 009a 0122     		movs	r2, #1
+ 102 009c 62F30403 		bfi	r3, r2, #0, #5
+ 103 00a0 8DF80430 		strb	r3, [sp, #4]
+ 104 00a4 9DF80530 		ldrb	r3, [sp, #5]	@ zero_extendqisi2
+ 105 00a8 6846     		mov	r0, sp
+ 106 00aa 62F30303 		bfi	r3, r2, #0, #4
+ 107 00ae 8DF80530 		strb	r3, [sp, #5]
+ 108 00b2 BDF80630 		ldrh	r3, [sp, #6]
+ 109 00b6 4FF4FA62 		mov	r2, #2000
+ 110 00ba 62F30B03 		bfi	r3, r2, #0, #12
+ 111 00be ADF80630 		strh	r3, [sp, #6]	@ movhi
+ 112 00c2 9DF80330 		ldrb	r3, [sp, #3]	@ zero_extendqisi2
+ 113 00c6 6FF30203 		bfc	r3, #0, #3
+ 114 00ca 8DF80330 		strb	r3, [sp, #3]
+ 115 00ce 9DF80030 		ldrb	r3, [sp, #0]	@ zero_extendqisi2
+ 116 00d2 6FF30503 		bfc	r3, #0, #6
+ 117 00d6 8DF80030 		strb	r3, [sp, #0]
+ 118 00da 9DF80130 		ldrb	r3, [sp, #1]	@ zero_extendqisi2
+ 119 00de 6FF30503 		bfc	r3, #0, #6
+ 120 00e2 8DF80130 		strb	r3, [sp, #1]
+ 121 00e6 9DF80230 		ldrb	r3, [sp, #2]	@ zero_extendqisi2
+ 122 00ea 6FF30403 		bfc	r3, #0, #5
+ 123 00ee 8DF80230 		strb	r3, [sp, #2]
+ 124 00f2 FFF7FEFF 		bl	rtc_settime
+ 125              	.L7:
+ 126 00f6 0EBD     		pop	{r1, r2, r3, pc}
+ 127              	.L11:
+ 128              		.align	2
+ 129              	.L10:
+ 130 00f8 00C00F40 		.word	1074774016
+ 132              		.align	1
+ 133              		.global	rtc_getDateTimeString
+ 134              		.thumb
+ 135              		.thumb_func
+ 137              	rtc_getDateTimeString:
+ 138              		@ args = 0, pretend = 0, frame = 8
+ 139              		@ frame_needed = 0, uses_anonymous_args = 0
+ 140 00fc 10B5     		push	{r4, lr}
+ 141 00fe 86B0     		sub	sp, sp, #24
+ 142 0100 0446     		mov	r4, r0
+ 143 0102 04A8     		add	r0, sp, #16
+ 144 0104 FFF7FEFF 		bl	rtc_gettime
+ 145 0108 BDF81610 		ldrh	r1, [sp, #22]
+ 146 010c 9DF81520 		ldrb	r2, [sp, #21]	@ zero_extendqisi2
+ 147 0110 C1F30B01 		ubfx	r1, r1, #0, #12
+ 148 0114 89B2     		uxth	r1, r1
+ 149 0116 0091     		str	r1, [sp, #0]
+ 150 0118 9DF81210 		ldrb	r1, [sp, #18]	@ zero_extendqisi2
+ 151 011c 9DF81430 		ldrb	r3, [sp, #20]	@ zero_extendqisi2
+ 152 0120 01F01F01 		and	r1, r1, #31
+ 153 0124 0191     		str	r1, [sp, #4]
+ 154 0126 9DF81110 		ldrb	r1, [sp, #17]	@ zero_extendqisi2
+ 155 012a 02F00F02 		and	r2, r2, #15
+ 156 012e 01F03F01 		and	r1, r1, #63
+ 157 0132 0291     		str	r1, [sp, #8]
+ 158 0134 9DF81010 		ldrb	r1, [sp, #16]	@ zero_extendqisi2
+ 159 0138 03F01F03 		and	r3, r3, #31
+ 160 013c 01F03F01 		and	r1, r1, #63
+ 161 0140 0391     		str	r1, [sp, #12]
+ 162 0142 2046     		mov	r0, r4
+ 163 0144 0249     		ldr	r1, .L13
+ 164 0146 FFF7FEFF 		bl	siprintf
+ 165 014a 2046     		mov	r0, r4
+ 166 014c 06B0     		add	sp, sp, #24
+ 167 014e 10BD     		pop	{r4, pc}
+ 168              	.L14:
+ 169              		.align	2
+ 170              	.L13:
+ 171 0150 00000000 		.word	.LC0
+ 173              		.section	.rodata.str1.1,"aMS",%progbits,1
+ 174              	.LC0:
+ 175 0000 25752F25 		.ascii	"%u/%u/%u,%02u:%02u:%02u\000"
+ 175      752F2575 
+ 175      2C253032 
+ 175      753A2530 
+ 175      32753A25 
+ 176              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 rtc.c
+C:\Users\Montoya\AppData\Local\Temp\ccn5Pkjc.s:15     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\ccn5Pkjc.s:20     .text:00000000 rtc_gettime
+C:\Users\Montoya\AppData\Local\Temp\ccn5Pkjc.s:33     .text:00000010 $d
+C:\Users\Montoya\AppData\Local\Temp\ccn5Pkjc.s:35     .text:00000014 $t
+C:\Users\Montoya\AppData\Local\Temp\ccn5Pkjc.s:40     .text:00000014 rtc_settime
+C:\Users\Montoya\AppData\Local\Temp\ccn5Pkjc.s:70     .text:0000005c $d
+C:\Users\Montoya\AppData\Local\Temp\ccn5Pkjc.s:72     .text:00000060 $t
+C:\Users\Montoya\AppData\Local\Temp\ccn5Pkjc.s:77     .text:00000060 rtc_initialize
+C:\Users\Montoya\AppData\Local\Temp\ccn5Pkjc.s:130    .text:000000f8 $d
+C:\Users\Montoya\AppData\Local\Temp\ccn5Pkjc.s:132    .text:000000fc $t
+C:\Users\Montoya\AppData\Local\Temp\ccn5Pkjc.s:137    .text:000000fc rtc_getDateTimeString
+C:\Users\Montoya\AppData\Local\Temp\ccn5Pkjc.s:171    .text:00000150 $d
+
+UNDEFINED SYMBOLS
+siprintf

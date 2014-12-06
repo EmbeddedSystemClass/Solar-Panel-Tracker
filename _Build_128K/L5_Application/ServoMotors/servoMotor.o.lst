@@ -1,0 +1,144 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"servoMotor.cpp"
+  14              		.global	__aeabi_dcmplt
+  15              		.global	__aeabi_dcmpgt
+  16              		.global	__aeabi_ddiv
+  17              		.global	__aeabi_dmul
+  18              		.global	__aeabi_dadd
+  19              		.global	__aeabi_ui2d
+  20              		.global	__aeabi_d2iz
+  21              		.text
+  22              		.align	1
+  23              		.global	_Z16change_directiondN11ServoMotors4EnumE
+  24              		.thumb
+  25              		.thumb_func
+  27              	_Z16change_directiondN11ServoMotors4EnumE:
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  31 0002 1746     		mov	r7, r2
+  32 0004 0023     		movs	r3, #0
+  33 0006 0022     		movs	r2, #0
+  34 0008 0446     		mov	r4, r0
+  35 000a 0D46     		mov	r5, r1
+  36 000c FFF7FEFF 		bl	__aeabi_dcmplt
+  37 0010 0028     		cmp	r0, #0
+  38 0012 32D1     		bne	.L1
+  39 0014 2046     		mov	r0, r4
+  40 0016 2946     		mov	r1, r5
+  41 0018 19A3     		adr	r3, .L3
+  42 001a D3E90023 		ldrd	r2, [r3]
+  43 001e FFF7FEFF 		bl	__aeabi_dcmpgt
+  44 0022 0028     		cmp	r0, #0
+  45 0024 29D1     		bne	.L1
+  46 0026 1E4B     		ldr	r3, .L3+32
+  47 0028 2046     		mov	r0, r4
+  48 002a 9E69     		ldr	r6, [r3, #24]
+  49 002c 2946     		mov	r1, r5
+  50 002e 16A3     		adr	r3, .L3+8
+  51 0030 D3E90023 		ldrd	r2, [r3]
+  52 0034 FFF7FEFF 		bl	__aeabi_ddiv
+  53 0038 15A3     		adr	r3, .L3+16
+  54 003a D3E90023 		ldrd	r2, [r3]
+  55 003e FFF7FEFF 		bl	__aeabi_dmul
+  56 0042 15A3     		adr	r3, .L3+24
+  57 0044 D3E90023 		ldrd	r2, [r3]
+  58 0048 FFF7FEFF 		bl	__aeabi_dadd
+  59 004c 0022     		movs	r2, #0
+  60 004e 154B     		ldr	r3, .L3+36
+  61 0050 FFF7FEFF 		bl	__aeabi_ddiv
+  62 0054 0446     		mov	r4, r0
+  63 0056 3046     		mov	r0, r6
+  64 0058 0D46     		mov	r5, r1
+  65 005a FFF7FEFF 		bl	__aeabi_ui2d
+  66 005e 0246     		mov	r2, r0
+  67 0060 0B46     		mov	r3, r1
+  68 0062 2046     		mov	r0, r4
+  69 0064 2946     		mov	r1, r5
+  70 0066 FFF7FEFF 		bl	__aeabi_dmul
+  71 006a FFF7FEFF 		bl	__aeabi_d2iz
+  72 006e 0146     		mov	r1, r0
+  73 0070 3846     		mov	r0, r7
+  74 0072 BDE8F840 		pop	{r3, r4, r5, r6, r7, lr}
+  75 0076 FFF7FEBF 		b	pwmUpdateMR
+  76              	.L1:
+  77 007a F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+  78              	.L4:
+  79 007c AFF30080 		.align	3
+  80              	.L3:
+  81 0080 00000000 		.word	0
+  82 0084 00406540 		.word	1080377344
+  83 0088 00000000 		.word	0
+  84 008c 00806640 		.word	1080459264
+  85 0090 CDCCCCCC 		.word	-858993459
+  86 0094 CCCCFC3F 		.word	1073532108
+  87 0098 66666666 		.word	1717986918
+  88 009c 6666E63F 		.word	1072064102
+  89 00a0 00800140 		.word	1073840128
+  90 00a4 00003440 		.word	1077149696
+  92              		.align	1
+  93              		.global	_Z15initilize_motorv
+  94              		.thumb
+  95              		.thumb_func
+  97              	_Z15initilize_motorv:
+  98              		@ args = 0, pretend = 0, frame = 0
+  99              		@ frame_needed = 0, uses_anonymous_args = 0
+ 100 00a8 38B5     		push	{r3, r4, r5, lr}
+ 101 00aa 0DA5     		adr	r5, .L6
+ 102 00ac D5E90045 		ldrd	r4, [r5]
+ 103 00b0 0D4B     		ldr	r3, .L6+8
+ 104 00b2 C820     		movs	r0, #200
+ 105 00b4 DA68     		ldr	r2, [r3, #12]
+ 106 00b6 42F40042 		orr	r2, r2, #32768
+ 107 00ba DA60     		str	r2, [r3, #12]
+ 108 00bc FFF7FEFF 		bl	initPWM
+ 109 00c0 0120     		movs	r0, #1
+ 110 00c2 FFF7FEFF 		bl	pwmEn
+ 111 00c6 2046     		mov	r0, r4
+ 112 00c8 2946     		mov	r1, r5
+ 113 00ca 0422     		movs	r2, #4
+ 114 00cc FFF7FEFF 		bl	_Z16change_directiondN11ServoMotors4EnumE
+ 115 00d0 2046     		mov	r0, r4
+ 116 00d2 2946     		mov	r1, r5
+ 117 00d4 0522     		movs	r2, #5
+ 118 00d6 BDE83840 		pop	{r3, r4, r5, lr}
+ 119 00da FEE7     		b	_Z16change_directiondN11ServoMotors4EnumE
+ 120              	.L7:
+ 121 00dc AFF30080 		.align	3
+ 122              	.L6:
+ 123 00e0 00000000 		.word	0
+ 124 00e4 00805640 		.word	1079410688
+ 125 00e8 00C00240 		.word	1073922048
+ 127 00ec AFF30080 		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 servoMotor.cpp
+C:\Users\Montoya\AppData\Local\Temp\ccQ68GJ9.s:22     .text:00000000 $t
+C:\Users\Montoya\AppData\Local\Temp\ccQ68GJ9.s:27     .text:00000000 _Z16change_directiondN11ServoMotors4EnumE
+C:\Users\Montoya\AppData\Local\Temp\ccQ68GJ9.s:81     .text:00000080 $d
+C:\Users\Montoya\AppData\Local\Temp\ccQ68GJ9.s:92     .text:000000a8 $t
+C:\Users\Montoya\AppData\Local\Temp\ccQ68GJ9.s:97     .text:000000a8 _Z15initilize_motorv
+C:\Users\Montoya\AppData\Local\Temp\ccQ68GJ9.s:123    .text:000000e0 $d
+C:\Users\Montoya\AppData\Local\Temp\ccQ68GJ9.s:127    .text:000000ec $t
+
+UNDEFINED SYMBOLS
+__aeabi_dcmplt
+__aeabi_dcmpgt
+__aeabi_ddiv
+__aeabi_dmul
+__aeabi_dadd
+__aeabi_ui2d
+__aeabi_d2iz
+pwmUpdateMR
+initPWM
+pwmEn
